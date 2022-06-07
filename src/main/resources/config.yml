@@ -12,31 +12,31 @@ drop-overflowing-item: false
 
 # currency name and value config
 currency:
-  # currency name to use in messages
-  name:
-    singular: Emerald
-    plural: Emeralds
+    # currency name to use in messages
+    name:
+        singular: Emerald
+        plural: Emeralds
 
-  # number of decimal digits supported by currency value (0 for whole numbers only)
-  digits: 2
+    # number of decimal digits supported by currency value (0 for whole numbers only)
+    digits: 2
 
-  # Display account balances with individual denomination names
-  named-denominations: false
+    # Display account balances with individual denomination names
+    named-denominations: false
 
-  # value of individual denominations. default: emerald: 1, emerald block: 9
-  denominations:
-    - material: emerald
-      value: 1
-    #      unit-name: Emeralde
-    #      unit-name-plural: Emeraldes
-    #      displayname: Emeralde
-    #      damage: 10
-    #      custom_model_data: 1
-    #      lore:
-    #        - line1
-    #        - line2
-    - material: emerald_block
-      value: 9
+    # value of individual denominations. default: emerald: 1, emerald block: 9
+    denominations:
+        - material: emerald
+          value: 1
+        #      unit-name: Emeralde
+        #      unit-name-plural: Emeraldes
+        #      displayname: Emeralde
+        #      damage: 10
+        #      custom_model_data: 1
+        #      lore:
+        #        - line1
+        #        - line2
+        - material: emerald_block
+          value: 9
 #      unit-name: Emeralde
 #      unit-name-plural: Emeraldes
 #      displayname: Emeralde
@@ -48,23 +48,28 @@ currency:
 
 # tax on /money pay transactions
 transactiontax:
-  flat: 0.0
-  rate: 0.0
+    flat: 0.0
+    rate: 0.0
 
 # balance to start an account with (purely virtual)
 startingbalance:
-  player: 0
-  town: 0
-  nation: 0
+    player: 0
+    town: 0
+    nation: 0
 
 # globally (dis)allow use of vault types
 usevault:
-  container: true
-  enderchest: true
-  # if true, denomination items located in shulker boxes, in the above enabled inventories, will be included to the denomination finding process
-  include-shulker-boxes: true
+    container: true
+    enderchest: true
+    # if true, denomination items located in shulker boxes, in the above enabled inventories, will be included to the denomination finding process
+    include-shulker-boxes: true
 
 # whether money/balance commands show vault and inventory balance separately
 balance:
-  show-vault: true
-  show-inventory: true
+    show-vault: true
+    show-inventory: true
+
+max_town_vaults: 2
+max_nation_vaults: 2
+
+vaults_only_in_towns: true

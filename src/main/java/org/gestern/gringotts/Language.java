@@ -10,15 +10,18 @@ import static org.gestern.gringotts.Util.translateColors;
  * Deals with all the language Strings.
  * <p>
  * In case Strings are not included in language.yml or there is no language.yml
- * there are default-values included here. If someone complains about a String not translating,
- * check for the yml-nodes in readLanguage below. If the node does not match the language file,
+ * there are default-values included here. If someone complains about a String
+ * not translating,
+ * check for the yml-nodes in readLanguage below. If the node does not match the
+ * language file,
  * the default English message will be shown.
  *
  * @author Daenara (KanaYamamoto Q bukkit.org)
  */
 public enum Language {
     LANG;
-    //global
+
+    // global
     public String noperm;
     public String playerOnly;
     public String balance;
@@ -26,7 +29,7 @@ public enum Language {
     public String inv_balance;
     public String invalid_account;
     public String reload;
-    //pay command
+    // pay command
     public String pay_success_tax;
     public String pay_success_sender;
     public String pay_success_target;
@@ -34,13 +37,13 @@ public enum Language {
     public String pay_insS_sender;
     public String pay_insS_target;
     public String pay_error;
-    //deposit command
+    // deposit command
     public String deposit_success;
     public String deposit_error;
-    //withdraw command
+    // withdraw command
     public String withdraw_success;
     public String withdraw_error;
-    //moneyadmin command
+    // moneyadmin command
     public String moneyadmin_b;
     public String moneyadmin_add_sender;
     public String moneyadmin_add_target;
@@ -48,31 +51,33 @@ public enum Language {
     public String moneyadmin_rm_sender;
     public String moneyadmin_rm_target;
     public String moneyadmin_rm_error;
-    //gringotts vaults
+    // gringotts vaults
     public String vault_created;
     public String vault_error;
     public String vault_noVaultPerm;
-    //towny plugin
+    // towny plugin
     public String plugin_towny_noTownVaultPerm;
     public String plugin_towny_noTownResident;
     public String plugin_towny_noNationVaultPerm;
     public String plugin_towny_notInNation;
-    //faction plugin
+    public String plugin_towny_vaultNotInTown;
+    public String plugin_towny_tooManyVaults;
+    // faction plugin
     public String plugin_faction_noVaultPerm;
     public String plugin_faction_notInFaction;
-    //worldguard plugin
+    // worldguard plugin
     public String plugin_worldguard_noVaultPerm;
-    //vault plugin
+    // vault plugin
     public String plugin_vault_insufficientFunds;
     public String plugin_vault_insufficientSpace;
     public String plugin_vault_error;
     public String plugin_vault_notImplemented;
 
     public void readLanguage(FileConfiguration savedLanguage) {
-        BiFunction<String, String, String> translator =
-                (path, def) -> translateColors(savedLanguage.getString(path, def));
+        BiFunction<String, String, String> translator = (path,
+                def) -> translateColors(savedLanguage.getString(path, def));
 
-        //global
+        // global
         LANG.noperm = translator.apply(
                 "noperm",
                 "You do not have permission to transfer money.");
@@ -95,7 +100,7 @@ public enum Language {
                 "reload",
                 "Gringotts: Reloaded configuration!");
 
-        //pay command
+        // pay command
         LANG.pay_success_sender = translator.apply(
                 "pay.success.sender",
                 "Sent %value to %player. ");
@@ -118,7 +123,7 @@ public enum Language {
                 "pay.insufficientSpace.target",
                 "%player tried to send %value, but you don't have enough space for that amount.");
 
-        //deposit command
+        // deposit command
         LANG.deposit_success = translator.apply(
                 "deposit.success",
                 "Deposited %value to your storage.");
@@ -126,7 +131,7 @@ public enum Language {
                 "deposit.error",
                 "Unable to deposit %value to your storage.");
 
-        //withdraw command
+        // withdraw command
         LANG.withdraw_success = translator.apply(
                 "withdraw.success",
                 "Withdrew %value from your storage.");
@@ -134,7 +139,7 @@ public enum Language {
                 "withdraw.error",
                 "Unable to withdraw %value from your storage.");
 
-        //moneyadmin command
+        // moneyadmin command
         LANG.moneyadmin_b = translator.apply(
                 "moneyadmin.b",
                 "Balance of account %player: %balance");
@@ -157,7 +162,7 @@ public enum Language {
                 "moneyadmin.rm.error",
                 "Could not remove %value from account %player");
 
-        //gringotts vaults
+        // gringotts vaults
         LANG.vault_created = translator.apply(
                 "vault.created",
                 "Created vault successfully.");
@@ -168,7 +173,7 @@ public enum Language {
                 "vault.error",
                 "Failed to create vault.");
 
-        //towny plugin
+        // towny plugin
         LANG.plugin_towny_noTownVaultPerm = translator.apply(
                 "plugins.towny.noTownPerm",
                 "You do not have permission to create town vaults here.");
@@ -181,8 +186,14 @@ public enum Language {
         LANG.plugin_towny_notInNation = translator.apply(
                 "plugins.towny.notInNation",
                 "Cannot create nation vault: You do not belong to a nation.");
+        LANG.plugin_towny_vaultNotInTown = translator.apply(
+                "plugins.towny.vaultNotInTown",
+                "You cannot create vaults outside of towns.");
+        LANG.plugin_towny_tooManyVaults = translator.apply(
+                "plugins.towny.tooManyVaults",
+                "You cannot create more vaults! Max: %max");
 
-        //faction plugin
+        // faction plugin
         LANG.plugin_faction_noVaultPerm = translator.apply(
                 "plugins.faction.noFactionVaultPerm",
                 "You do not have permission to create a faction vault here.");
@@ -190,12 +201,12 @@ public enum Language {
                 "plugins.faction.notInFaction",
                 "Cannot create faction vault: You are not in a faction.");
 
-        //worldguard plugin
+        // worldguard plugin
         LANG.plugin_worldguard_noVaultPerm = translator.apply(
                 "plugins.worldguard.noFactionVaultPerm",
                 "You do not have permission to create a region vault here.");
 
-        //vault plugin
+        // vault plugin
         LANG.plugin_vault_insufficientFunds = translator.apply(
                 "plugins.vault.insufficientFunds",
                 "Insufficient funds.");

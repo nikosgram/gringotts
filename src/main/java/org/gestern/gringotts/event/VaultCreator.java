@@ -9,15 +9,22 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.gestern.gringotts.*;
 import org.gestern.gringotts.accountholder.AccountHolder;
 
+import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.object.Nation;
+import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.metadata.IntegerDataField;
+
 import java.util.Optional;
 
 import static org.gestern.gringotts.Language.LANG;
+import static org.gestern.gringotts.Configuration.CONF;
 
 public class VaultCreator implements Listener {
     private final Accounting accounting = Gringotts.getInstance().getAccounting();
 
     /**
-     * If the vault creation event was properly handled and an AccountHolder supplied, it will be created here.
+     * If the vault creation event was properly handled and an AccountHolder
+     * supplied, it will be created here.
      *
      * @param event event to handle
      */
@@ -39,11 +46,70 @@ public class VaultCreator implements Listener {
         SignChangeEvent cause = event.getCause();
         Optional<Sign> optionalSign = Util.getBlockStateAs(
                 cause.getBlock(),
-                Sign.class
-        );
+                Sign.class);
 
         if (!optionalSign.isPresent()) {
             return;
+        }
+
+        // Check if vault is in any town
+        if (CONF.vaultsOnlyInTowns
+                && Gringotts.getInstance().getDependencies().hasDependency("towny")
+                && TownyAPI.getInstance().getTownBlock(event.getCause().getBlock().getLocation()) == null) {
+            event.getCause().getPlayer().sendMessage(LANG.plugin_towny_vaultNotInTown);
+            return;
+        }
+
+        // Check if town or nation has exceeded the max amount of vaults
+        if (Gringotts.getInstance().getDependencies().hasDependency("towny")) {
+
+            IntegerDataField vaultCountDataField = new IntegerDataField("vault_count", 1);
+
+            switch (owner.getType()) {
+                case "town":
+                    Town town = TownyAPI.getInstance().getTown(owner.getName());
+
+                    if (!town.hasMeta(vaultCountDataField.getKey())) {
+                        town.addMetaData(vaultCountDataField);
+                        break;
+                    }
+
+                    IntegerDataField townVaultCount = (IntegerDataField) town.getMetadata("vault_count");
+                    townVaultCount.setValue(townVaultCount.getValue() + 1);
+
+                    if (townVaultCount.getValue() + 1 > CONF.maxTownVaults) {
+                        event.getCause().getPlayer().sendMessage(LANG.plugin_towny_tooManyVaults
+                                .replace("%max", String.valueOf(CONF.maxTownVaults))
+                                .replace("%government", String.valueOf(owner.getType())));
+                        return;
+                    }
+
+                    break;
+
+                case "nation":
+                    Nation nation = TownyAPI.getInstance().getNation(owner.getName());
+
+                    if (!nation.hasMeta(vaultCountDataField.getKey())) {
+                        nation.addMetaData(vaultCountDataField);
+                        break;
+                    }
+
+                    IntegerDataField nationVaultCount = (IntegerDataField) nation.getMetadata("vault_count");
+                    nationVaultCount.setValue(nationVaultCount.getValue() + 1);
+
+                    if (nationVaultCount.getValue() + 1 > CONF.maxNationVaults) {
+
+                        event.getCause().getPlayer().sendMessage(LANG.plugin_towny_tooManyVaults
+                                .replace("%max", String.valueOf(CONF.maxNationVaults))
+                                .replace("%government", String.valueOf(owner.getType())));
+                        return;
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         // create account chest

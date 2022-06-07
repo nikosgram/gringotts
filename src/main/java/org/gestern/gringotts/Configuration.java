@@ -31,24 +31,28 @@ public enum Configuration {
     private final Logger log = Gringotts.getInstance().getLogger();
 
     /**
-     * Regular expression defining what patterns on a sign will create a valid vault. Subpattern 1 denotes the type
+     * Regular expression defining what patterns on a sign will create a valid
+     * vault. Subpattern 1 denotes the type
      * of the vault.
      */
     public String vaultPattern = "[^\\[]*\\[(\\w*) ?vault\\]";
     /**
      * Language to be used for messages. Should be an ISO 639-1 (alpha-2) code.
-     * If a language is not supported by Gringotts, use user-configured or default (English) messages.
+     * If a language is not supported by Gringotts, use user-configured or default
+     * (English) messages.
      */
     public String language = "custom";
 
     public boolean dropOverflowingItem = false;
 
     /**
-     * Flat tax on every player-to-player transaction. This is a value in currency units.
+     * Flat tax on every player-to-player transaction. This is a value in currency
+     * units.
      */
     public double transactionTaxFlat = 0;
     /**
-     * Rate tax on every player-to-player transaction. This is a fraction, e.g. 0.1 means 10% tax.
+     * Rate tax on every player-to-player transaction. This is a fraction, e.g. 0.1
+     * means 10% tax.
      */
     public double transactionTaxRate = 0;
     /**
@@ -79,6 +83,11 @@ public enum Configuration {
      * if true, the denomination finding process will include shulker boxes
      */
     public boolean includeShulkerBoxes = true;
+
+    public int maxTownVaults = 2;
+    public int maxNationVaults = 2;
+
+    public boolean vaultsOnlyInTowns = true;
     /**
      * Currency configuration.
      */
@@ -176,6 +185,11 @@ public enum Configuration {
         CONF.language = savedConfig.getString("language", "custom");
 
         CONF.vaultPattern = savedConfig.getString("vault_pattern", "[^\\[]*\\[(\\w*) ?vault\\]");
+
+        CONF.maxTownVaults = savedConfig.getInt("max_town_vaults", 2);
+        CONF.maxNationVaults = savedConfig.getInt("max_nation_vaults", 2);
+
+        CONF.vaultsOnlyInTowns = savedConfig.getBoolean("vaults_only_in_towns", true);
     }
 
     /**
@@ -195,7 +209,7 @@ public enum Configuration {
 
                 try {
                     MemoryConfiguration denomConf = new MemoryConfiguration();
-                    //noinspection unchecked
+                    // noinspection unchecked
                     denomConf.addDefaults((Map<String, Object>) denomEntry);
 
                     String materialName = denomConf.getString("material");
@@ -224,9 +238,8 @@ public enum Configuration {
                     }
 
                     List<String> lore = denomConf.isString("lore") ?
-                            // allow users to configure a single lore string
-                            Collections.singletonList(denomConf.getString("lore")) :
-                            denomConf.getStringList("lore");
+                    // allow users to configure a single lore string
+                            Collections.singletonList(denomConf.getString("lore")) : denomConf.getStringList("lore");
 
                     if (!lore.isEmpty()) {
                         List<String> loreTranslated = new ArrayList<>(lore.size());
@@ -246,16 +259,15 @@ public enum Configuration {
 
                     double value = denomConf.getDouble("value");
 
-                    String unitName = denomConf.contains("unit-name") ?
-                            denomConf.getString("unit-name") :
-                            unitName(denomType);
+                    String unitName = denomConf.contains("unit-name") ? denomConf.getString("unit-name")
+                            : unitName(denomType);
 
-                    String unitNamePlural = denomConf.contains("unit-name-plural") ?
-                            denomConf.getString("unit-name-plural") :
-                            unitName + "s";
+                    String unitNamePlural = denomConf.contains("unit-name-plural")
+                            ? denomConf.getString("unit-name-plural")
+                            : unitName + "s";
 
-                    currency.addDenomination(denomType, value, translateColors(unitName), translateColors
-                            (unitNamePlural));
+                    currency.addDenomination(denomType, value, translateColors(unitName),
+                            translateColors(unitNamePlural));
 
                 } catch (GringottsConfigurationException e) {
                     throw e;
@@ -330,15 +342,13 @@ public enum Configuration {
                         denomType,
                         value,
                         translateColors(unitName),
-                        translateColors(unitNamePlural)
-                );
+                        translateColors(unitNamePlural));
 
             } catch (Exception e) {
                 throw new GringottsConfigurationException(
                         "Encountered an error parsing currency. Please check your Gringotts configuration. Error was: "
                                 + e.getMessage(),
-                        e
-                );
+                        e);
             }
         }
     }
