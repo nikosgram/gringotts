@@ -77,7 +77,7 @@ public class VaultCreator implements Listener {
                     IntegerDataField townVaultCount = (IntegerDataField) town.getMetadata("vault_count");
                     townVaultCount.setValue(townVaultCount.getValue() + 1);
 
-                    if (townVaultCount.getValue() + 1 > CONF.maxTownVaults) {
+                    if (townVaultCount.getValue() > CONF.maxTownVaults) {
                         event.getCause().getPlayer().sendMessage(LANG.plugin_towny_tooManyVaults
                                 .replace("%max", String.valueOf(CONF.maxTownVaults))
                                 .replace("%government", String.valueOf(owner.getType())));
@@ -97,7 +97,7 @@ public class VaultCreator implements Listener {
                     IntegerDataField nationVaultCount = (IntegerDataField) nation.getMetadata("vault_count");
                     nationVaultCount.setValue(nationVaultCount.getValue() + 1);
 
-                    if (nationVaultCount.getValue() + 1 > CONF.maxNationVaults) {
+                    if (nationVaultCount.getValue() > CONF.maxNationVaults) {
 
                         event.getCause().getPlayer().sendMessage(LANG.plugin_towny_tooManyVaults
                                 .replace("%max", String.valueOf(CONF.maxNationVaults))
