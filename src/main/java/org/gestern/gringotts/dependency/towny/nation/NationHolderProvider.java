@@ -48,13 +48,15 @@ public class NationHolderProvider implements AccountHolderProvider, Listener {
             return getAccountHolder(UUID.fromString(id));
         } catch (IllegalArgumentException ignored) {
             if (id.startsWith(VaultCreationEvent.Type.NATION.getId() + "-")) {
-                return getAccountHolder(
-                        TownyUniverse.getInstance().getNation(id.substring(7))
-                );
+                return TownyUniverse.getInstance().getNation(id.substring(7)) != null
+                        ? getAccountHolder(TownyUniverse.getInstance().getNation(id.substring(7)))
+                        : null;
             }
-        }
 
-        return getAccountHolder(TownyUniverse.getInstance().getNation(id));
+        }
+        return TownyUniverse.getInstance().getNation(id) != null
+                ? getAccountHolder(TownyUniverse.getInstance().getNation(id))
+                : null;
     }
 
     /**
@@ -65,14 +67,18 @@ public class NationHolderProvider implements AccountHolderProvider, Listener {
      */
     @Override
     public AccountHolder getAccountHolder(UUID uuid) {
-        return getAccountHolder(TownyUniverse.getInstance().getNation(uuid));
+        return TownyUniverse.getInstance().getNation(uuid) != null
+                ? getAccountHolder(TownyUniverse.getInstance().getNation(uuid))
+                : null;
     }
 
     /**
-     * Get a TownyAccountHolder for the nation of which player is a resident, if any.
+     * Get a TownyAccountHolder for the nation of which player is a resident, if
+     * any.
      *
      * @param player player to get nation for
-     * @return TownyAccountHolder for the nation of which player is a resident, if any. null otherwise.
+     * @return TownyAccountHolder for the nation of which player is a resident, if
+     *         any. null otherwise.
      */
     @Override
     public AccountHolder getAccountHolder(OfflinePlayer player) {
@@ -83,7 +89,7 @@ public class NationHolderProvider implements AccountHolderProvider, Listener {
                 return null;
             }
 
-            Town   town   = resident.getTown();
+            Town town = resident.getTown();
             Nation nation = town.getNation();
 
             return getAccountHolder(nation);

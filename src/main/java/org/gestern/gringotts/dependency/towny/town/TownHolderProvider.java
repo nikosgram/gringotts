@@ -47,11 +47,15 @@ public class TownHolderProvider implements AccountHolderProvider, Listener {
             return getAccountHolder(UUID.fromString(id));
         } catch (IllegalArgumentException ignored) {
             if (id.startsWith(VaultCreationEvent.Type.TOWN.getId() + "-")) {
-                return getAccountHolder(TownyUniverse.getInstance().getTown(id.substring(5)));
+                return TownyUniverse.getInstance().getTown(id.substring(5)) != null
+                        ? getAccountHolder(TownyUniverse.getInstance().getTown(id.substring(5)))
+                        : null;
             }
         }
 
-        return getAccountHolder(TownyUniverse.getInstance().getTown(id));
+        return TownyUniverse.getInstance().getTown(id) != null
+                ? getAccountHolder(TownyUniverse.getInstance().getTown(id))
+                : null;
     }
 
     /**
@@ -62,14 +66,17 @@ public class TownHolderProvider implements AccountHolderProvider, Listener {
      */
     @Override
     public AccountHolder getAccountHolder(UUID uuid) {
-        return getAccountHolder(TownyUniverse.getInstance().getTown(uuid));
+        return TownyUniverse.getInstance().getTown(uuid) != null
+                ? getAccountHolder(TownyUniverse.getInstance().getTown(uuid))
+                : null;
     }
 
     /**
      * Get a TownyAccountHolder for the town of which player is a resident, if any.
      *
      * @param player player to get town for
-     * @return TownyAccountHolder for the town of which player is a resident, if any. null otherwise.
+     * @return TownyAccountHolder for the town of which player is a resident, if
+     *         any. null otherwise.
      */
     @Override
     public AccountHolder getAccountHolder(OfflinePlayer player) {
