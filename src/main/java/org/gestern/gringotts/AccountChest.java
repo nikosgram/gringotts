@@ -28,7 +28,8 @@ public class AccountChest {
     public final GringottsAccount account;
 
     /**
-     * Create Account chest based on a sign marking its position and belonging to an account.
+     * Create Account chest based on a sign marking its position and belonging to an
+     * account.
      *
      * @param sign    the marker sign
      * @param account the account
@@ -38,8 +39,7 @@ public class AccountChest {
             throw new IllegalArgumentException(String.format(
                     "null arguments to AccountChest() not allowed. args were: sign: %s, account: %s",
                     sign,
-                    account
-            ));
+                    account));
         }
 
         this.sign = sign;
@@ -57,8 +57,7 @@ public class AccountChest {
         if (block != null) {
             BlockState blockState = PaperLib.getBlockState(
                     block,
-                    false
-            ).getState();
+                    false).getState();
 
             if (blockState instanceof InventoryHolder) {
                 return (InventoryHolder) blockState;
@@ -73,7 +72,7 @@ public class AccountChest {
      *
      * @return Location of the storage block of this account chest.
      */
-    private Location chestLocation() {
+    public Location chestLocation() {
         Block block = Util.chestBlock(sign);
 
         return block != null ? block.getLocation() : null;
@@ -91,7 +90,8 @@ public class AccountChest {
     }
 
     /**
-     * Get account inventory of this account chest, which is based on the container inventory.
+     * Get account inventory of this account chest, which is based on the container
+     * inventory.
      *
      * @return account inventory of this account chest
      */
@@ -139,7 +139,8 @@ public class AccountChest {
 
     /**
      * Attempts to add given amount to this chest.
-     * If the amount is larger than available space, the space is filled and the actually
+     * If the amount is larger than available space, the space is filled and the
+     * actually
      * added amount returned.
      *
      * @param value the value
@@ -157,7 +158,8 @@ public class AccountChest {
 
     /**
      * Attempts to remove given amount from this chest.
-     * If the amount is larger than available items, everything is removed and the number of
+     * If the amount is larger than available items, everything is removed and the
+     * number of
      * removed items returned.
      *
      * @param value amount to remove
@@ -175,7 +177,8 @@ public class AccountChest {
 
     /**
      * Checks whether this chest is currently a valid vault.
-     * It is considered valid when the sign block contains [vault] or [(type) vault] on the first line,
+     * It is considered valid when the sign block contains [vault] or [(type) vault]
+     * on the first line,
      * a name on the third line and has a chest associated with it.
      *
      * @return false if the chest can be considered a valid vault
@@ -239,24 +242,25 @@ public class AccountChest {
             Chest left = (Chest) (chestInventory.getLeftSide().getHolder());
             Chest right = (Chest) (chestInventory.getRightSide().getHolder());
 
-            return new Chest[]{left, right};
+            return new Chest[] { left, right };
         } else {
             InventoryHolder inventoryHolder = inventory.getHolder();
             if (inventoryHolder instanceof Chest) {
-                return new Chest[]{(Chest) (inventory.getHolder())};
+                return new Chest[] { (Chest) (inventory.getHolder()) };
             }
         }
 
         return new Chest[0];
     }
 
-
     /**
      * Hash code int.
      *
      * @return the int
      */
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -269,14 +273,15 @@ public class AccountChest {
         return result;
     }
 
-
     /**
      * Equals boolean.
      *
      * @param obj the obj
      * @return the boolean
      */
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -299,10 +304,12 @@ public class AccountChest {
     }
 
     /**
-     * Determine whether the chest of another AccountChest would be connected to this chest.
+     * Determine whether the chest of another AccountChest would be connected to
+     * this chest.
      *
      * @param chest another AccountChest
-     * @return whether the chest of another AccountChest would be connected to this chest
+     * @return whether the chest of another AccountChest would be connected to this
+     *         chest
      */
     public boolean connected(AccountChest chest) {
         // no valid account chest anymore -> no connection

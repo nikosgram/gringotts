@@ -45,6 +45,7 @@ import org.gestern.gringotts.dependency.towny.TownyDependency;
 import org.gestern.gringotts.event.AccountListener;
 import org.gestern.gringotts.event.PlayerVaultListener;
 import org.gestern.gringotts.event.VaultCreator;
+import org.gestern.gringotts.event.VaultDestroyedListener;
 
 import java.io.File;
 import java.io.InputStream;
@@ -88,7 +89,7 @@ public class Gringotts extends JavaPlugin {
         DataSourceConfig dsConfig = dbConfig.getDataSourceConfig();
 
         dsConfig.setUrl(replaceDatabaseString(dsConfig.getUrl()));
-        //noinspection ResultOfMethodCallIgnored
+        // noinspection ResultOfMethodCallIgnored
         getDataFolder().mkdirs();
 
         ClassLoader previous = Thread.currentThread().getContextClassLoader();
@@ -134,8 +135,7 @@ public class Gringotts extends JavaPlugin {
                 Bukkit.getPluginManager().disablePlugin(this);
 
                 getLogger().warning(
-                        "Neither Vault or Reserve was found. Other plugins may not be able to access Gringotts accounts."
-                );
+                        "Neither Vault or Reserve was found. Other plugins may not be able to access Gringotts accounts.");
 
                 return;
             }
@@ -150,8 +150,7 @@ public class Gringotts extends JavaPlugin {
                         Economy.class,
                         new VaultConnector(),
                         this,
-                        ServicePriority.Highest
-                );
+                        ServicePriority.Highest);
 
                 getLogger().info("Registered Vault interface.");
             }
@@ -185,36 +184,31 @@ public class Gringotts extends JavaPlugin {
             Plugin plugin = this.dependencies.hookPlugin(
                     "Towny",
                     "com.palmergames.bukkit.towny.Towny",
-                    "0.97"
-            );
+                    "0.97");
 
             if (plugin != null) {
                 if (!this.dependencies.registerDependency(new TownyDependency(
                         this,
-                        plugin
-                ))) {
+                        plugin))) {
                     getLogger().warning("Towny plugin is already assigned into the dependencies.");
                 }
             }
         } catch (NullArgumentException ignored) {
         } catch (IllegalArgumentException e) {
             getLogger().warning(
-                    "Looks like Towny plugin is not compatible with Gringotts's code."
-            );
+                    "Looks like Towny plugin is not compatible with Gringotts's code.");
         }
 
         this.registerGenericDependency(
                 "vault",
                 "Vault",
                 "net.milkbowl.vault.Vault",
-                "1.7"
-        );
+                "1.7");
         this.registerGenericDependency(
                 "reserve",
                 "Reserve",
                 "net.tnemc.core.Reserve",
-                "0.1.5.0"
-        );
+                "0.1.5.0");
 
         this.dependencies.onLoad();
     }
@@ -228,30 +222,25 @@ public class Gringotts extends JavaPlugin {
      * @param minVersion the min version
      */
     private void registerGenericDependency(String id,
-                                           String name,
-                                           String classPath,
-                                           String minVersion) {
+            String name,
+            String classPath,
+            String minVersion) {
         try {
             if (!this.dependencies.registerDependency(new GenericDependency(
                     this.dependencies.hookPlugin(
                             name,
                             classPath,
-                            minVersion
-                    ),
-                    id
-            ))) {
+                            minVersion),
+                    id))) {
                 getLogger().warning(
-                        name + " plugin is already assigned into the dependencies."
-                );
+                        name + " plugin is already assigned into the dependencies.");
             }
         } catch (NullArgumentException ignored) {
         } catch (IllegalArgumentException e) {
             getLogger().warning(
                     String.format(
                             "Looks like %1$s plugin is not compatible with Gringotts's code.",
-                            name
-                    )
-            );
+                            name));
         }
     }
 
@@ -313,9 +302,11 @@ public class Gringotts extends JavaPlugin {
                     String version = dependency.getVersion();
 
                     if (name != null && version != null) {
-                        returned.put(name, new HashMap<String, Integer>() {{
-                            put(version, 1);
-                        }});
+                        returned.put(name, new HashMap<String, Integer>() {
+                            {
+                                put(version, 1);
+                            }
+                        });
                     }
                 }
             }
@@ -325,7 +316,7 @@ public class Gringotts extends JavaPlugin {
     }
 
     private void registerCommands() {
-        registerCommand(new String[]{"balance", "money"}, new MoneyExecutor());
+        registerCommand(new String[] { "balance", "money" }, new MoneyExecutor());
         registerCommand("moneyadmin", new MoneyAdminExecutor());
         registerCommand("gringotts", new GringottsExecutor(this));
     }
@@ -349,8 +340,7 @@ public class Gringotts extends JavaPlugin {
         if (pluginCommand == null) {
             getLogger().warning(String.format(
                     "Looks like the command '%1$s' is not available. Please be sure that Gringotts is the only plugin using it.",
-                    name
-            ));
+                    name));
 
             return false;
         }
@@ -367,6 +357,7 @@ public class Gringotts extends JavaPlugin {
         manager.registerEvents(new AccountListener(), this);
         manager.registerEvents(new PlayerVaultListener(), this);
         manager.registerEvents(new VaultCreator(), this);
+        manager.registerEvents(new VaultDestroyedListener(), this);
 
         // listeners for other account types are loaded with dependencies
     }
@@ -438,7 +429,8 @@ public class Gringotts extends JavaPlugin {
         setupEBean();
 
         // legacy support: migrate derby if it hasn't happened yet
-        // automatically migrate derby to eBeans if db exists and migration flag hasn't been set
+        // automatically migrate derby to eBeans if db exists and migration flag hasn't
+        // been set
         Migration migration = new Migration();
 
         DerbyDAO derbyDAO;
@@ -488,7 +480,8 @@ public class Gringotts extends JavaPlugin {
      * Gets the {@link EbeanServer} tied to this plugin.
      * <p>
      * <i>For more information on the use of <a href="http://www.avaje.org/">
-     * Avaje Ebeans ORM</a>, see <a href="http://www.avaje.org/ebean/documentation.html">
+     * Avaje Ebeans ORM</a>, see
+     * <a href="http://www.avaje.org/ebean/documentation.html">
      * Avaje Ebeans Documentation
      * </a></i>
      * <p>
@@ -496,7 +489,9 @@ public class Gringotts extends JavaPlugin {
      * href="https://github.com/Bukkit/HomeBukkit">Bukkit's Homebukkit Plugin
      * </a></i>
      *
-     * @return ebean server instance or null if not enabled all EBean related methods has been removed with Minecraft 1.12 - see https://www.spigotmc.org/threads/194144/
+     * @return ebean server instance or null if not enabled all EBean related
+     *         methods has been removed with Minecraft 1.12 - see
+     *         https://www.spigotmc.org/threads/194144/
      */
     public EbeanServer getDatabase() {
         return ebean;
@@ -556,7 +551,8 @@ public class Gringotts extends JavaPlugin {
     }
 
     /**
-     * The account holder factory is the place to go if you need an AccountHolder instance for an id.
+     * The account holder factory is the place to go if you need an AccountHolder
+     * instance for an id.
      *
      * @return the account holder factory
      */
