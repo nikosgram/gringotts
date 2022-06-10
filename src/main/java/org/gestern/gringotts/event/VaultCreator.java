@@ -77,13 +77,14 @@ public class VaultCreator implements Listener {
 
                     if (CONF.maxTownVaults == -1) { // Keep track of vaults created & break because there is no limit for them
                         townVaultCount.setValue(townVaultCount.getValue() + 1);
+                        town.addMetaData(townVaultCount); // Saves to disk
                         break;
                     }
 
                     if (townVaultCount.getValue() + 1 > CONF.maxTownVaults) {
                         event.getCause().getPlayer().sendMessage(LANG.plugin_towny_tooManyVaults
-                        .replace("%max", String.valueOf(CONF.maxTownVaults))
-                        .replace("%government", String.valueOf(owner.getType())));
+                                .replace("%max", String.valueOf(CONF.maxTownVaults))
+                                .replace("%government", String.valueOf(owner.getType())));
                         return;
                     }
 
@@ -102,6 +103,7 @@ public class VaultCreator implements Listener {
 
                     if (CONF.maxNationVaults == -1) { // Keep track of vaults created & break because there is no limit for them
                         nationVaultCount.setValue(nationVaultCount.getValue() + 1);
+                        nation.addMetaData(nationVaultCount); // Saves to disk
                         break;
                     }
 
