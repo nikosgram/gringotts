@@ -186,10 +186,10 @@ public enum Configuration {
 
         CONF.vaultPattern = savedConfig.getString("vault_pattern", "[^\\[]*\\[(\\w*) ?vault\\]");
 
-        CONF.maxTownVaults = savedConfig.getInt("max_town_vaults", 2);
-        CONF.maxNationVaults = savedConfig.getInt("max_nation_vaults", 2);
+        CONF.maxTownVaults = savedConfig.getInt("max_town_vaults", -1);
+        CONF.maxNationVaults = savedConfig.getInt("max_nation_vaults", -1);
 
-        CONF.vaultsOnlyInTowns = savedConfig.getBoolean("vaults_only_in_towns", true);
+        CONF.vaultsOnlyInTowns = savedConfig.getBoolean("vaults_only_in_towns", false);
     }
 
     /**
