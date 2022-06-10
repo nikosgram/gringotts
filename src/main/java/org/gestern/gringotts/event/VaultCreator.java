@@ -68,13 +68,18 @@ public class VaultCreator implements Listener {
             switch (owner.getType()) {
                 case "town":
                     Town town = TownyAPI.getInstance().getTown(owner.getName());
+                    IntegerDataField townVaultCount = (IntegerDataField) town.getMetadata("vault_count");
 
                     if (!town.hasMeta(vaultCountDataField.getKey())) {
                         town.addMetaData(vaultCountDataField);
                         break;
                     }
 
-                    IntegerDataField townVaultCount = (IntegerDataField) town.getMetadata("vault_count");
+                    if (CONF.maxTownVaults == -1) { // Keep track of vaults created & break because there is no limit for them
+                        townVaultCount.setValue(townVaultCount.getValue() + 1);
+                        town.addMetaData(townVaultCount); // Saves to disk
+                        break;
+                    }
 
                     if (townVaultCount.getValue() + 1 > CONF.maxTownVaults) {
                         event.getCause().getPlayer().sendMessage(LANG.plugin_towny_tooManyVaults
@@ -83,28 +88,34 @@ public class VaultCreator implements Listener {
                         return;
                     }
 
-                    townVaultCount.setValue(townVaultCount.getValue() + 1);
+                    townVaultCount.setValue(townVaultCount.getValue() + 1); // Saves to memory
+                    town.addMetaData(townVaultCount); // Saves to disk
                     break;
 
                 case "nation":
                     Nation nation = TownyAPI.getInstance().getNation(owner.getName());
+                    IntegerDataField nationVaultCount = (IntegerDataField) nation.getMetadata("vault_count");
 
                     if (!nation.hasMeta(vaultCountDataField.getKey())) {
                         nation.addMetaData(vaultCountDataField);
                         break;
                     }
 
-                    IntegerDataField nationVaultCount = (IntegerDataField) nation.getMetadata("vault_count");
+                    if (CONF.maxNationVaults == -1) { // Keep track of vaults created & break because there is no limit for them
+                        nationVaultCount.setValue(nationVaultCount.getValue() + 1);
+                        nation.addMetaData(nationVaultCount); // Saves to disk
+                        break;
+                    }
 
                     if (nationVaultCount.getValue() + 1 > CONF.maxNationVaults) {
-
                         event.getCause().getPlayer().sendMessage(LANG.plugin_towny_tooManyVaults
                                 .replace("%max", String.valueOf(CONF.maxNationVaults))
                                 .replace("%government", String.valueOf(owner.getType())));
                         return;
                     }
 
-                    nationVaultCount.setValue(nationVaultCount.getValue() + 1);
+                    nationVaultCount.setValue(nationVaultCount.getValue() + 1); // Saves to memory
+                    nation.addMetaData(nationVaultCount); // Saves to disk
                     break;
 
                 default:
