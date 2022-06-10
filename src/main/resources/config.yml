@@ -69,7 +69,10 @@ balance:
     show-vault: true
     show-inventory: true
 
-max_town_vaults: 2
-max_nation_vaults: 2
+# Maximum number of vaults a town can own, set to -1 for infinite number of vaults
+max_town_vaults: -1
+# Maximum number of vaults a nation can own, set to -1 for infinite number of vaults
+max_nation_vaults: -1
 
-vaults_only_in_towns: true
+# Prevents players from creating a vault outside a town 
+vaults_only_in_towns: false

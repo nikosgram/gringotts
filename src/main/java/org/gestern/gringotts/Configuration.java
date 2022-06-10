@@ -84,10 +84,10 @@ public enum Configuration {
      */
     public boolean includeShulkerBoxes = true;
 
-    public int maxTownVaults = 2;
-    public int maxNationVaults = 2;
+    public int maxTownVaults = -1;
+    public int maxNationVaults = -1;
 
-    public boolean vaultsOnlyInTowns = true;
+    public boolean vaultsOnlyInTowns = false;
     /**
      * Currency configuration.
      */
