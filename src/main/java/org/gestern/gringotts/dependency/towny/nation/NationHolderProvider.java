@@ -52,8 +52,8 @@ public class NationHolderProvider implements AccountHolderProvider, Listener {
                         ? getAccountHolder(TownyUniverse.getInstance().getNation(id.substring(7)))
                         : null;
             }
-
         }
+
         return TownyUniverse.getInstance().getNation(id) != null
                 ? getAccountHolder(TownyUniverse.getInstance().getNation(id))
                 : null;

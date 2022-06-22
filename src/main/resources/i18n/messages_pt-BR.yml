@@ -1,0 +1,69 @@
+# Here you can change the output of all messages sent to your players via chat.
+# To do so you just have to rewrite the values below. Just be sure to not put any %-variables in the message that were not there to begin with,
+# it will just be displayed as %whateveryouwrote in the message sent.
+#
+# %value stands for an amount of money
+# %player means either the player executing the command, the player you interact with or the player whose account you want to manipulate
+# %balance stands for the amount of money a player has
+#
+# sender stands for the message the one executing the command gets, target for the other person who is affected. 
+# Errors and other messages are only displayed for the one executing the command
+
+
+playeronly: "Este comando apenas pode ser executado por um jogador."
+noperm: "Você não tem permissão para tranferir dinheiro."
+balance: "Seu saldo atual: %balance"
+vault_balance: "Saldo do cofre: %balance"
+inv_balance: "Saldo no inventário: %balance"
+invalidaccount: "Conta inválida: %player"
+reload: "Gringotts: configuração recarregada!"
+
+pay:
+    success:   
+        tax: "Imposto de transação deduzido de sua conta: %value"
+        sender: "Enviado %value para %player. "
+        target: "Recebido %value de %player."
+    insufficientFunds: "Sua conta não tem fundos suficiente. Saldo atual: %balance. Necessário: %value"
+    insufficientSpace:
+        sender: "%player não tem espaço para %value"
+        target: "%player tentou enviar %value, mas você não tem espaço suficiente para essa quantidade."
+    error: "Sua tentativa de enviar %value para %player falhou por razões desconhecidas."
+
+deposit:
+    success: "Depositado %value em sua conta."
+    error: "Não foi possível depositar %value em sua conta."
+
+withdraw:
+    success: "Sacou %value de sua conta."
+    error: "Não foi possível sacar %value de sua conta."
+
+moneyadmin:
+    b: "Saldo da conta %player: %balance"
+    add: 
+        sender: "Adicionado %value para a conta %player"
+        target: "Adicionado para sua conta: %value"
+        error: "Não foi possível adicionar %value para a conta %player"
+    rm:
+        sender: "Removido %value da conta %player"
+        target: "Removido de sua conta: %value"
+        error: "Não foi possível remover %value da conta %player"
+
+vault:
+    created: "Cofre criado com sucesso."
+    error: "Criação do cofre falhou."
+    noVaultPerm: "Você não tem permissão para criar cofres aqui."
+
+plugins:
+    towny:
+        noTownVaultPerm: "Você não tem permissão para criar cofres de cidade aqui."
+        noTownResident: "Não é possível criar cofre de cidade: Você não pertence a uma cidade."
+        noNationVaultPerm: "Você não tem permissão para criar cofres de nação aqui."
+        notInNation: "Não é possível criar cofre de nação: Você não pertence a uma nação."
+    vault:
+        insufficientFunds: "Saldo insufiente."
+        insufficientSpace: "Sem espaço suficiente."
+        unknownError: "Erro desconhecido."
+        notImplemented: "Gringotts não possui suporte a bancos"
+    faction:
+        noFactionVaultPerm: "Você não tem permissão para criar cofre de facção aqui."
+        notInFaction: "Não é possível criar cofre de facção: Você não pertence a uma facção."
