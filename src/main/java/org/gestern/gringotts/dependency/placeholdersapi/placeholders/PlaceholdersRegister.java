@@ -65,6 +65,9 @@ public class PlaceholdersRegister extends PlaceholderExpansion  {
 
                     if (params[2].equalsIgnoreCase("location") || params[2].equalsIgnoreCase("position")) {
                         Location loc = account.vaultLocation(index);
+                        if (loc == null) {
+                            return null;
+                        }
                         if (loc.getWorld() == null) {
                             return (int)loc.getX() + ", " + (int)loc.getY() + ", " + (int)loc.getZ();
                         }
