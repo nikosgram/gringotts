@@ -12,7 +12,7 @@ api-version: "1.15"
 awareness:
   - !@UTF-8
 
-softdepend: [Towny]
+softdepend: [Towny, PlaceholderAPI]
 loadbefore: [Reserve, Vault]
 
 commands:

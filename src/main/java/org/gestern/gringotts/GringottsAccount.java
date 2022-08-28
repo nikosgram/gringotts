@@ -1,6 +1,7 @@
 package org.gestern.gringotts;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.ShulkerBox;
@@ -91,6 +92,33 @@ public class GringottsAccount {
      */
     public long getVaultBalance() {
         return getTimeout(countChestInventories());
+    }
+
+    /**
+     * Current balance this account has in chest(s) in cents
+     *
+     * @return current balance this account has in chest(s) in cents
+     */
+    public long getVaultBalance(int index) {
+        return getTimeout(countChestInventory(index));
+    }
+
+    /**
+     * Current balance this account has in chest(s) in cents
+     *
+     * @return current balance this account has in chest(s) in cents
+     */
+    public Location getVaultLocation(int index) {
+        return getTimeout(countChestLocation(index));
+    }
+
+
+    public List<AccountChest> getVaultChests() {
+        return getTimeout(getChests());
+    }
+
+    public int getVaultCount() {
+        return getVaultChests().size();
     }
 
     /**
@@ -361,6 +389,45 @@ public class GringottsAccount {
         };
 
         return callSync(callMe);
+    }
+
+    private CompletableFuture<Long> countChestInventory(int index) {
+        Callable<Long> callMe = () -> {
+            List<AccountChest> chests  = dao.retrieveChests(this);
+
+            if (CONF.usevaultContainer && index < chests.size() && index >= 0) {
+                return chests.get(index).balance();
+            }
+
+            Optional<Player> playerOpt = playerOwner();
+            if (playerOpt.isPresent()) {
+                Player player = playerOpt.get();
+
+                if (CONF.usevaultEnderchest && USE_VAULT_ENDERCHEST.isAllowed(player) && index == -1) {
+                    return new AccountInventory(player.getEnderChest()).balance();
+                }
+            }
+            return -1L;
+        };
+
+        return callSync(callMe);
+    }
+
+    private CompletableFuture<Location> countChestLocation(int index) {
+        Callable<Location> callMe = () -> {
+            List<AccountChest> chests  = dao.retrieveChests(this);
+
+            if (CONF.usevaultContainer && index < chests.size() && index >= 0) {
+                return chests.get(index).chestLocation();
+            }
+            return null;
+        };
+
+        return callSync(callMe);
+    }
+
+    private CompletableFuture<List<AccountChest>> getChests() {
+        return callSync(() -> dao.retrieveChests(this));
     }
 
     private CompletableFuture<Long> countPlayerInventory() {

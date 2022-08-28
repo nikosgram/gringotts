@@ -1,5 +1,7 @@
 package org.gestern.gringotts.api;
 
+import org.bukkit.Location;
+
 /**
  * Defines actions possible on an account in an economy.
  */
@@ -42,6 +44,27 @@ public interface Account {
      * @return the vault balance of this account.
      */
     double vaultBalance();
+
+    /**
+     * Return the vault at index balance of this account.
+     *
+     * @return the vault at index balance of this account.
+     */
+    double vaultBalance(int index);
+
+    /**
+     * Return the vault at index location of this account.
+     *
+     * @return the vault at index location of this account.
+     */
+    Location vaultLocation(int index);
+
+    /**
+     * Return the number of vault of this account.
+     *
+     * @return the number of vault of this account.
+     */
+    int vaultCount();
 
     /**
      * Return the inventory balance of this account.

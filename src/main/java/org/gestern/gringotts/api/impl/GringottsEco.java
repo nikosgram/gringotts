@@ -1,6 +1,7 @@
 package org.gestern.gringotts.api.impl;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.gestern.gringotts.AccountInventory;
@@ -255,6 +256,36 @@ public class GringottsEco implements Eco {
          */
         @Override
         public double vaultBalance() {
+            return 0;
+        }
+
+        /**
+         * Vault balance double.
+         *
+         * @return the double
+         */
+        @Override
+        public double vaultBalance(int index) {
+            return 0;
+        }
+
+        /**
+         * Vault location.
+         *
+         * @return the location
+         */
+        @Override
+        public Location vaultLocation(int index) {
+            return null;
+        }
+
+        /**
+         * Vault count.
+         *
+         * @return the int
+         */
+        @Override
+        public int vaultCount() {
             return 0;
         }
 
@@ -560,6 +591,36 @@ public class GringottsEco implements Eco {
         @Override
         public double vaultBalance() {
             return CONF.getCurrency().getDisplayValue(acc.getVaultBalance());
+        }
+
+        /**
+         * Vault balance double.
+         *
+         * @return the double
+         */
+        @Override
+        public double vaultBalance(int index) {
+            return CONF.getCurrency().getDisplayValue(acc.getVaultBalance(index));
+        }
+
+        /**
+         * Vault location.
+         *
+         * @return the location
+         */
+        @Override
+        public Location vaultLocation(int index) {
+            return acc.getVaultLocation(index);
+        }
+
+        /**
+         * Vault count.
+         *
+         * @return the int
+         */
+        @Override
+        public int vaultCount() {
+            return acc.getVaultCount();
         }
 
         /**

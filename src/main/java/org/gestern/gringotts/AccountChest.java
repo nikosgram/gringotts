@@ -73,7 +73,7 @@ public class AccountChest {
      *
      * @return Location of the storage block of this account chest.
      */
-    private Location chestLocation() {
+    public Location chestLocation() {
         Block block = Util.chestBlock(sign);
 
         return block != null ? block.getLocation() : null;
