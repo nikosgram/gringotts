@@ -65,18 +65,19 @@ public class VaultConnector implements Economy {
 
         if (player == null) {
             //noinspection deprecation
-            if (Bukkit.getOfflinePlayer(accountId).hasPlayedBefore()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(accountId);
+            if (offlinePlayer.hasPlayedBefore()) {
                 //noinspection deprecation
-                player = Bukkit.getOfflinePlayer(accountId);
+                player = offlinePlayer;
             } else {
                 try {
                     UUID targetUuid = UUID.fromString(accountId);
+                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
 
-                    if (Bukkit.getOfflinePlayer(targetUuid).hasPlayedBefore()) {
-                        player = Bukkit.getOfflinePlayer(targetUuid);
+                    if (offlinePlayer.hasPlayedBefore()) {
+                        player = offlinePlayer;
                     }
-                } catch (IllegalArgumentException ignored) {
-                }
+                } catch (IllegalArgumentException ignored) {}
             }
         }
 
@@ -98,18 +99,19 @@ public class VaultConnector implements Economy {
 
         if (player == null) {
             //noinspection deprecation
-            if (Bukkit.getOfflinePlayer(accountId).hasPlayedBefore()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(accountId);
+            if (offlinePlayer.hasPlayedBefore()) {
                 //noinspection deprecation
-                player = Bukkit.getOfflinePlayer(accountId);
+                player = offlinePlayer;
             } else {
                 try {
                     UUID targetUuid = UUID.fromString(accountId);
 
-                    if (Bukkit.getOfflinePlayer(targetUuid).hasPlayedBefore()) {
-                        player = Bukkit.getOfflinePlayer(targetUuid);
+                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
+                    if (offlinePlayer.hasPlayedBefore()) {
+                        player = offlinePlayer;
                     }
-                } catch (IllegalArgumentException ignored) {
-                }
+                } catch (IllegalArgumentException ignored) {}
             }
         }
 
@@ -131,18 +133,19 @@ public class VaultConnector implements Economy {
 
         if (player == null) {
             //noinspection deprecation
-            if (Bukkit.getOfflinePlayer(accountId).hasPlayedBefore()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(accountId);
+            if (offlinePlayer.hasPlayedBefore()) {
                 //noinspection deprecation
-                player = Bukkit.getOfflinePlayer(accountId);
+                player = offlinePlayer;
             } else {
                 try {
                     UUID targetUuid = UUID.fromString(accountId);
+                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
 
-                    if (Bukkit.getOfflinePlayer(targetUuid).hasPlayedBefore()) {
-                        player = Bukkit.getOfflinePlayer(targetUuid);
+                    if (offlinePlayer.hasPlayedBefore()) {
+                        player = offlinePlayer;
                     }
-                } catch (IllegalArgumentException ignored) {
-                }
+                } catch (IllegalArgumentException ignored) {}
             }
         }
 
@@ -164,18 +167,19 @@ public class VaultConnector implements Economy {
 
         if (player == null) {
             //noinspection deprecation
-            if (Bukkit.getOfflinePlayer(accountId).hasPlayedBefore()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(accountId);
+            if (offlinePlayer.hasPlayedBefore()) {
                 //noinspection deprecation
-                player = Bukkit.getOfflinePlayer(accountId);
+                player = offlinePlayer;
             } else {
                 try {
                     UUID targetUuid = UUID.fromString(accountId);
+                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
 
-                    if (Bukkit.getOfflinePlayer(targetUuid).hasPlayedBefore()) {
-                        player = Bukkit.getOfflinePlayer(targetUuid);
+                    if (offlinePlayer.hasPlayedBefore()) {
+                        player = offlinePlayer;
                     }
-                } catch (IllegalArgumentException ignored) {
-                }
+                } catch (IllegalArgumentException ignored) {}
             }
         }
 

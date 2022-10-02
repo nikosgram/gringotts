@@ -164,15 +164,17 @@ public class GringottsEco implements Eco {
 
             if (player == null) {
                 //noinspection deprecation
-                if (Bukkit.getOfflinePlayer(id).hasPlayedBefore()) {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(id);
+                if (offlinePlayer.hasPlayedBefore()) {
                     //noinspection deprecation
-                    player = Bukkit.getOfflinePlayer(id);
+                    player = offlinePlayer;
                 } else {
                     try {
                         UUID targetUuid = UUID.fromString(id);
+                        offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
 
-                        if (Bukkit.getOfflinePlayer(targetUuid).hasPlayedBefore()) {
-                            player = Bukkit.getOfflinePlayer(targetUuid);
+                        if (offlinePlayer.hasPlayedBefore()) {
+                            player = offlinePlayer;
                         }
                     } catch (IllegalArgumentException ignored) {
                     }

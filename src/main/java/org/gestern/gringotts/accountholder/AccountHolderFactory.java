@@ -1,14 +1,18 @@
 package org.gestern.gringotts.accountholder;
 
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.gestern.gringotts.event.VaultCreationEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Manages creating various types of AccountHolder centrally.

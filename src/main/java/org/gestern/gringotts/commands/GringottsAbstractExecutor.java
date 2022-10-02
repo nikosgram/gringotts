@@ -1,7 +1,13 @@
 package org.gestern.gringotts.commands;
 
-import com.google.common.collect.Lists;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -14,12 +20,15 @@ import org.gestern.gringotts.Gringotts;
 import org.gestern.gringotts.Language;
 import org.gestern.gringotts.Permissions;
 import org.gestern.gringotts.accountholder.AccountHolderProvider;
-import org.gestern.gringotts.api.*;
-import org.gestern.gringotts.event.VaultCreationEvent;
+import org.gestern.gringotts.api.Account;
+import org.gestern.gringotts.api.Eco;
+import org.gestern.gringotts.api.PlayerAccount;
+import org.gestern.gringotts.api.TaxedTransaction;
+import org.gestern.gringotts.api.TransactionResult;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.google.common.collect.Lists;
+
+import net.md_5.bungee.api.chat.ComponentBuilder;
 
 public abstract class GringottsAbstractExecutor implements TabExecutor {
     static final String TAG_BALANCE = "%balance";
@@ -77,26 +86,28 @@ public abstract class GringottsAbstractExecutor implements TabExecutor {
             return true;
         }
 
-        OfflinePlayer reciepienPlayer = Bukkit.getPlayer(recipientName);
+        OfflinePlayer recipientPlayer = Bukkit.getPlayer(recipientName);
 
-        if (reciepienPlayer == null) {
+        if (recipientPlayer == null) {
             //noinspection deprecation
-            if (Bukkit.getOfflinePlayer(recipientName).hasPlayedBefore()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(recipientName);
+            if (offlinePlayer.hasPlayedBefore()) {
                 //noinspection deprecation
-                reciepienPlayer = Bukkit.getOfflinePlayer(recipientName);
+                recipientPlayer = offlinePlayer;
             } else {
                 try {
                     UUID targetUuid = UUID.fromString(recipientName);
+                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
 
-                    if (Bukkit.getOfflinePlayer(targetUuid).hasPlayedBefore()) {
-                        reciepienPlayer = Bukkit.getOfflinePlayer(targetUuid);
+                    if (offlinePlayer.hasPlayedBefore()) {
+                        recipientPlayer = offlinePlayer;
                     }
                 } catch (IllegalArgumentException ignored) {
                 }
             }
         }
 
-        if (reciepienPlayer == null) {
+        if (recipientPlayer == null) {
             player.spigot().sendMessage(
                     new ComponentBuilder(
                             "Player with name `" + recipientName + "` never played in this server before."
@@ -110,7 +121,7 @@ public abstract class GringottsAbstractExecutor implements TabExecutor {
         Account       to   = eco.account(recipientName);
 
         TaxedTransaction  transaction = from.send(value).withTaxes();
-        TransactionResult result      = transaction.to(eco.player(reciepienPlayer.getUniqueId()));
+        TransactionResult result      = transaction.to(eco.player(recipientPlayer.getUniqueId()));
 
         double tax        = transaction.getTax();
         double valueAdded = value + tax;
