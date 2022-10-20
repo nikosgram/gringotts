@@ -1,6 +1,6 @@
 # for details on configuration, see https://github.com/MinecraftWars/Gringotts/blob/master/doc/configuration.md
 
-# supported languages: "custom" (default, english), "de" (german), and "pt-BR" (brazilian portuguese).
+# supported languages: "custom" (default, english), "de" (german), "fr" (french), and "pt-BR" (brazilian portuguese).
 language: custom
 
 # regex that create a vault if matches with a sign

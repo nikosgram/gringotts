@@ -1,0 +1,52 @@
+playeronly: "Cette commande ne peut exécuté que par un joueur."
+noperm: "Vous n'avez pas la permission de transférer de l'argent."
+balance: "Votre solde est de : %balance"
+vault_balance: "Solde du coffre-fort: %balance"
+inv_balance: "Solde de l'inventaire: %balance"
+invalidaccount: "Compte invalide : %player"
+reload: "Gringotts: Configuration rechargée !"
+
+pay:
+    success:
+        tax: "Taxes déduites de votre compte : %value"
+        sender: "Vous avez envoyé %value à %player."
+        target: "Vous avez reçu %value de %player."
+    insufficientFunds: "Votre compte à un solde insuffisant. Solde actuel: %balance. Nécessaire: %value"
+    insufficientSpace:
+        sender: "%player n'a pas assez d'espace de stockage pour %value"
+        target: "%player a essayé d'envoyer %value, mais vous n'avez pas assez d'espace pour cet quantité."
+    error: "Votre tentative d'envoyer %value à %player a échoué pour des raisons inconnues."
+
+deposit:
+    success: "%value ajouté à votre stockage."
+    error: "Impossible de déposer %value dans votre stockage."
+
+withdraw:
+    success: "%value retiré de votre stockage."
+    error: "Impossible de retirer %value de votre stockage."
+
+moneyadmin:
+    b: "Solde du compte %player : %balance"
+    add:
+        sender: "%value ajouté à %player"
+        target: "Ajouté à votre compte : %value"
+        error: "Impossible d'ajouter %value au compte %player"
+    rm:
+        sender: "%value enlevé de votre compte %player"
+        target: "Enlevé de votre compte : %value"
+        error: "Impossible d'enlever %value de votre compte %player"
+
+vault:
+    created: "Coffre-fort créé avec succès."
+    error: "Impossible de créer un coffre-fort."
+    noVaultPerm: "Vous n'avez pas la permission de créer des coffre-forts ici."
+
+plugins:
+    vault:
+        insufficientFunds: "Fonds insuffisant."
+        insufficientSpace: "Espace insuffisant."
+        unknownError: "Erreur inconnue."
+        notImplemented: "Gringotts ne prend pas en charge les banques."
+    faction:
+        noFactionVaultPerm: "Vous n'avez pas la permission de créer un coffre-fort de faction ici."
+        notInFaction: "Impossible de créer un coffre-fort de faction : Vous n'êtes pas dans une faction."
