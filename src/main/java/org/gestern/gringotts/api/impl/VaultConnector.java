@@ -64,9 +64,8 @@ public class VaultConnector implements Economy {
         OfflinePlayer player = Bukkit.getPlayer(accountId);
 
         if (player == null) {
-            //noinspection deprecation
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(accountId);
-            if (offlinePlayer.hasPlayedBefore()) {
+            OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(accountId)).findAny().orElse(null);
+            if (offlinePlayer != null) {
                 //noinspection deprecation
                 player = offlinePlayer;
             } else {
@@ -98,9 +97,8 @@ public class VaultConnector implements Economy {
         OfflinePlayer player = Bukkit.getPlayer(accountId);
 
         if (player == null) {
-            //noinspection deprecation
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(accountId);
-            if (offlinePlayer.hasPlayedBefore()) {
+            OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(accountId)).findAny().orElse(null);
+            if (offlinePlayer != null) {
                 //noinspection deprecation
                 player = offlinePlayer;
             } else {
@@ -132,10 +130,8 @@ public class VaultConnector implements Economy {
         OfflinePlayer player = Bukkit.getPlayer(accountId);
 
         if (player == null) {
-            //noinspection deprecation
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(accountId);
-            if (offlinePlayer.hasPlayedBefore()) {
-                //noinspection deprecation
+            OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(accountId)).findAny().orElse(null);
+            if (offlinePlayer != null) {
                 player = offlinePlayer;
             } else {
                 try {
@@ -166,10 +162,8 @@ public class VaultConnector implements Economy {
         OfflinePlayer player = Bukkit.getPlayer(accountId);
 
         if (player == null) {
-            //noinspection deprecation
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(accountId);
-            if (offlinePlayer.hasPlayedBefore()) {
-                //noinspection deprecation
+            OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(accountId)).findAny().orElse(null);
+            if (offlinePlayer != null) {
                 player = offlinePlayer;
             } else {
                 try {
