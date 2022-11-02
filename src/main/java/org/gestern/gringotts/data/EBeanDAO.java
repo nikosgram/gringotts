@@ -122,7 +122,7 @@ public class EBeanDAO implements DAO {
 
         Bukkit.getPluginManager().callEvent(startBalanceEvent);
 
-        account.add(startBalanceEvent.startValue);
+        if (startBalanceEvent.startValue > 0) account.add(startBalanceEvent.startValue);
 
         db.save(acc);
 
