@@ -6,6 +6,7 @@ import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.gestern.gringotts.Gringotts;
+import org.gestern.gringotts.Util;
 import org.gestern.gringotts.api.Account;
 import org.gestern.gringotts.api.Eco;
 import org.gestern.gringotts.api.TransactionResult;
@@ -61,24 +62,7 @@ public class VaultConnector implements Economy {
 
     @Override
     public boolean hasAccount(String accountId) {
-        OfflinePlayer player = Bukkit.getPlayer(accountId);
-
-        if (player == null) {
-            OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(accountId)).findAny().orElse(null);
-            if (offlinePlayer != null) {
-                //noinspection deprecation
-                player = offlinePlayer;
-            } else {
-                try {
-                    UUID targetUuid = UUID.fromString(accountId);
-                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
-
-                    if (offlinePlayer.hasPlayedBefore()) {
-                        player = offlinePlayer;
-                    }
-                } catch (IllegalArgumentException ignored) {}
-            }
-        }
+        OfflinePlayer player = Util.getOfflinePlayer(accountId);
 
         if (player != null) {
             return hasAccount(player);
@@ -94,24 +78,7 @@ public class VaultConnector implements Economy {
 
     @Override
     public double getBalance(String accountId) {
-        OfflinePlayer player = Bukkit.getPlayer(accountId);
-
-        if (player == null) {
-            OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(accountId)).findAny().orElse(null);
-            if (offlinePlayer != null) {
-                //noinspection deprecation
-                player = offlinePlayer;
-            } else {
-                try {
-                    UUID targetUuid = UUID.fromString(accountId);
-
-                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
-                    if (offlinePlayer.hasPlayedBefore()) {
-                        player = offlinePlayer;
-                    }
-                } catch (IllegalArgumentException ignored) {}
-            }
-        }
+        OfflinePlayer player = Util.getOfflinePlayer(accountId);
 
         if (player != null) {
             return getBalance(player);
@@ -127,23 +94,7 @@ public class VaultConnector implements Economy {
 
     @Override
     public boolean has(String accountId, double amount) {
-        OfflinePlayer player = Bukkit.getPlayer(accountId);
-
-        if (player == null) {
-            OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(accountId)).findAny().orElse(null);
-            if (offlinePlayer != null) {
-                player = offlinePlayer;
-            } else {
-                try {
-                    UUID targetUuid = UUID.fromString(accountId);
-                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
-
-                    if (offlinePlayer.hasPlayedBefore()) {
-                        player = offlinePlayer;
-                    }
-                } catch (IllegalArgumentException ignored) {}
-            }
-        }
+        OfflinePlayer player = Util.getOfflinePlayer(accountId);
 
         if (player != null) {
             return has(player, amount);
@@ -159,23 +110,7 @@ public class VaultConnector implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(String accountId, double amount) {
-        OfflinePlayer player = Bukkit.getPlayer(accountId);
-
-        if (player == null) {
-            OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(accountId)).findAny().orElse(null);
-            if (offlinePlayer != null) {
-                player = offlinePlayer;
-            } else {
-                try {
-                    UUID targetUuid = UUID.fromString(accountId);
-                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
-
-                    if (offlinePlayer.hasPlayedBefore()) {
-                        player = offlinePlayer;
-                    }
-                } catch (IllegalArgumentException ignored) {}
-            }
-        }
+        OfflinePlayer player = Util.getOfflinePlayer(accountId);
 
         if (player != null) {
             return withdrawPlayer(player, amount);

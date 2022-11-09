@@ -4,9 +4,8 @@ import org.gestern.gringotts.AccountChest;
 import org.gestern.gringotts.GringottsAccount;
 import org.gestern.gringotts.GringottsStorageException;
 import org.gestern.gringotts.accountholder.AccountHolder;
-import org.gestern.gringotts.event.VaultCreationEvent;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * The interface Dao.
@@ -72,7 +71,7 @@ public interface DAO {
      *
      * @return set of all chests registered with Gringotts
      */
-    List<AccountChest> retrieveChests();
+    Collection<AccountChest> retrieveChests();
 
     /**
      * Get all chests belonging to the given account.
@@ -81,14 +80,14 @@ public interface DAO {
      * @param account account to fetch chests for.
      * @return account to get chests for
      */
-    List<AccountChest> retrieveChests(GringottsAccount account);
+    Collection<AccountChest> retrieveChests(GringottsAccount account);
 
     /**
      * Gets accounts.
      *
      * @return the accounts
      */
-    List<String> getAccounts();
+    Collection<String> getAccounts();
 
     /**
      * Gets accounts.
@@ -96,7 +95,7 @@ public interface DAO {
      * @param type the type
      * @return the accounts
      */
-    List<String> getAccounts(String type);
+    Collection<String> getAccounts(String type);
 
     /**
      * Store an amount of cents to a given account.

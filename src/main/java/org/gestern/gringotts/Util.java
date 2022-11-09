@@ -1,16 +1,23 @@
 package org.gestern.gringotts;
 
 import io.papermc.lib.PaperLib;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * The type Util.
@@ -28,17 +35,47 @@ public final class Util {
             return false;
         }
 
-        BlockState blockState = PaperLib.getBlockState(
-                block,
-                true).getState();
+        BlockState blockState = PaperLib.getBlockState(block, true).getState();
 
         return blockState instanceof Sign;
     }
 
     /**
+     * Gets an OfflinePlayer of the player currently known as the specified player name or UUID
+     *
+     * @param playerName the player name, or UUID, to look up the unique ID for
+     * @return An OfflinePlayer, or null if that player name is not registered in server
+     */
+    public static @Nullable OfflinePlayer getOfflinePlayer(@NotNull String playerName) {
+        Player player = Bukkit.getPlayerExact(playerName);
+
+        if (player != null) {
+            return player;
+        }
+
+        for (OfflinePlayer offlinePlayer : Bukkit.getOfflinePlayers()) {
+            if (Objects.requireNonNull(offlinePlayer.getName()).equalsIgnoreCase(playerName)) {
+                return offlinePlayer;
+            }
+        }
+
+        try {
+            UUID          targetUuid    = UUID.fromString(playerName);
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
+
+            if (offlinePlayer.hasPlayedBefore()) {
+                return offlinePlayer;
+            }
+        } catch (IllegalArgumentException ignored) {
+        }
+
+        return null;
+    }
+
+    /**
      * Gets block state as T, if blockState
      * is not assignable from T class, is
-     * gonna return an empty {@link Optional}.
+     * going to return an empty {@link Optional}.
      *
      * @param <T>             the type parameter
      * @param block           the block

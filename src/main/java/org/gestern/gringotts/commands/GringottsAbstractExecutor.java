@@ -1,13 +1,7 @@
 package org.gestern.gringotts.commands;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.google.common.collect.Lists;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -15,20 +9,13 @@ import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.gestern.gringotts.Configuration;
-import org.gestern.gringotts.Gringotts;
-import org.gestern.gringotts.Language;
-import org.gestern.gringotts.Permissions;
+import org.gestern.gringotts.*;
 import org.gestern.gringotts.accountholder.AccountHolderProvider;
-import org.gestern.gringotts.api.Account;
-import org.gestern.gringotts.api.Eco;
-import org.gestern.gringotts.api.PlayerAccount;
-import org.gestern.gringotts.api.TaxedTransaction;
-import org.gestern.gringotts.api.TransactionResult;
+import org.gestern.gringotts.api.*;
 
-import com.google.common.collect.Lists;
-
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class GringottsAbstractExecutor implements TabExecutor {
     static final String TAG_BALANCE = "%balance";
@@ -86,24 +73,7 @@ public abstract class GringottsAbstractExecutor implements TabExecutor {
             return true;
         }
 
-        OfflinePlayer recipientPlayer = Bukkit.getPlayer(recipientName);
-
-        if (recipientPlayer == null) {
-            OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(recipientName)).findAny().orElse(null);
-            if (offlinePlayer != null) {
-                recipientPlayer = offlinePlayer;
-            } else {
-                try {
-                    UUID targetUuid = UUID.fromString(recipientName);
-                    offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
-
-                    if (offlinePlayer.hasPlayedBefore()) {
-                        recipientPlayer = offlinePlayer;
-                    }
-                } catch (IllegalArgumentException ignored) {
-                }
-            }
-        }
+        OfflinePlayer recipientPlayer = Util.getOfflinePlayer(recipientName);
 
         if (recipientPlayer == null) {
             player.spigot().sendMessage(

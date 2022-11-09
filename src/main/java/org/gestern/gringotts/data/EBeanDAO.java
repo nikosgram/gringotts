@@ -141,7 +141,7 @@ public class EBeanDAO implements DAO {
     }
 
     @Override
-    public synchronized List<AccountChest> retrieveChests() {
+    public synchronized Collection<AccountChest> retrieveChests() {
         List<SqlRow> result = db.createSqlQuery(
                 "SELECT ac.world, ac.x, ac.y, ac.z, a.type, a.owner FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id "
         ).findList();

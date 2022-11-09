@@ -15,6 +15,8 @@ import org.gestern.gringotts.api.TransactionResult;
 import org.gestern.gringotts.currency.Denomination;
 import org.gestern.gringotts.data.DAO;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -109,7 +111,7 @@ public class GringottsAccount {
     }
 
 
-    public List<AccountChest> getVaultChests() {
+    public Collection<AccountChest> getVaultChests() {
         return getTimeout(getChests());
     }
 
@@ -364,8 +366,8 @@ public class GringottsAccount {
 
     private CompletableFuture<Long> countChestInventories() {
         Callable<Long> callMe = () -> {
-            List<AccountChest> chests  = dao.retrieveChests(this);
-            long               balance = 0;
+            Collection<AccountChest> chests  = dao.retrieveChests(this);
+            long                     balance = 0;
 
             if (Configuration.CONF.useVaultContainer) {
                 for (AccountChest chest : chests) {
@@ -389,7 +391,7 @@ public class GringottsAccount {
 
     private CompletableFuture<Long> countChestInventory(int index) {
         Callable<Long> callMe = () -> {
-            List<AccountChest> chests  = dao.retrieveChests(this);
+            List<AccountChest> chests = new ArrayList<>(dao.retrieveChests(this));
 
             if (Configuration.CONF.useVaultContainer && index < chests.size() && index >= 0) {
                 return chests.get(index).balance();
@@ -411,7 +413,7 @@ public class GringottsAccount {
 
     private CompletableFuture<Location> countChestLocation(int index) {
         Callable<Location> callMe = () -> {
-            List<AccountChest> chests  = dao.retrieveChests(this);
+            List<AccountChest> chests = new ArrayList<>(dao.retrieveChests(this));
 
             if (Configuration.CONF.useVaultContainer && index < chests.size() && index >= 0) {
                 return chests.get(index).chestLocation();
@@ -422,7 +424,7 @@ public class GringottsAccount {
         return callSync(callMe);
     }
 
-    private CompletableFuture<List<AccountChest>> getChests() {
+    private CompletableFuture<Collection<AccountChest>> getChests() {
         return callSync(() -> dao.retrieveChests(this));
     }
 

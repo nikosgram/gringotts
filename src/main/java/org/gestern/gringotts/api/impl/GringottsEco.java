@@ -1,30 +1,20 @@
 package org.gestern.gringotts.api.impl;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.gestern.gringotts.AccountInventory;
-import org.gestern.gringotts.Configuration;
-import org.gestern.gringotts.Gringotts;
-import org.gestern.gringotts.GringottsAccount;
+import org.gestern.gringotts.*;
 import org.gestern.gringotts.accountholder.AccountHolder;
 import org.gestern.gringotts.accountholder.AccountHolderFactory;
 import org.gestern.gringotts.accountholder.PlayerAccountHolder;
-import org.gestern.gringotts.api.Account;
-import org.gestern.gringotts.api.BankAccount;
-import org.gestern.gringotts.api.Currency;
-import org.gestern.gringotts.api.Eco;
-import org.gestern.gringotts.api.PlayerAccount;
-import org.gestern.gringotts.api.Transaction;
-import org.gestern.gringotts.api.TransactionResult;
+import org.gestern.gringotts.api.*;
 import org.gestern.gringotts.currency.GringottsCurrency;
 import org.gestern.gringotts.data.DAO;
+
+import java.util.Collections;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * The type Gringotts eco.
@@ -167,24 +157,7 @@ public class GringottsEco implements Eco {
         String[] parts = id.split(":");
 
         if (parts.length == 1) {
-            OfflinePlayer player = Bukkit.getPlayer(id);
-
-            if (player == null) {
-                OfflinePlayer offlinePlayer = List.of(Bukkit.getOfflinePlayers()).stream().filter(p -> p.getName().equals(id)).findAny().orElse(null);
-                if (offlinePlayer != null) {
-                    player = offlinePlayer;
-                } else {
-                    try {
-                        UUID targetUuid = UUID.fromString(id);
-                        offlinePlayer = Bukkit.getOfflinePlayer(targetUuid);
-
-                        if (offlinePlayer.hasPlayedBefore()) {
-                            player = offlinePlayer;
-                        }
-                    } catch (IllegalArgumentException ignored) {
-                    }
-                }
-            }
+            OfflinePlayer player = Util.getOfflinePlayer(id);
 
             if (player != null) {
                 return player(player.getUniqueId());
