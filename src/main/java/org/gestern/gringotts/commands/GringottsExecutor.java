@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -17,18 +18,23 @@ import org.gestern.gringotts.Gringotts;
 import org.gestern.gringotts.Language;
 import org.gestern.gringotts.api.dependency.Dependency;
 import org.gestern.gringotts.currency.Denomination;
+import org.gestern.gringotts.currency.DenominationKey;
 import org.gestern.gringotts.currency.GringottsCurrency;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Administrative commands not related to ingame money.
  */
 public class GringottsExecutor extends GringottsAbstractExecutor {
-    private static final List<String> commands = Arrays.asList("reload", "dependencies", "denominations");
+    private static final List<String> commands = Arrays.asList("reload", "dependencies", "denominations", "adddenomination");
     private final Gringotts gringotts;
+
+    private static final String TAG_VALUE = "%value";
+    private static final String TAG_NAME = "%name";
 
     /**
      * Instantiates a new Gringotts executor.
@@ -129,6 +135,58 @@ public class GringottsExecutor extends GringottsAbstractExecutor {
                 }
                 break;
             }
+            case "addden":
+            case "adddenomination":
+                if (sender instanceof Player) {
+                    Player player = (Player) sender;
+                    ItemStack heldItem = player.getInventory().getItemInMainHand();
+                    if (heldItem == null || heldItem.getType() == Material.AIR || heldItem.getAmount() == 0) {
+                        player.sendMessage(Language.LANG.hold_item);
+                        return true;
+                    }
+                    if (args.length < 2) {
+                        player.sendMessage(Language.LANG.missing_value.replace(TAG_NAME, Language.LANG.denomination_value));
+                        return true;
+                    }
+                    int value;
+                    try {
+                        value = Integer.valueOf(args[1]);
+                    }
+                    catch (NumberFormatException ex) {
+                        player.sendMessage(Language.LANG.missing_value.replace(TAG_VALUE, args[1]).replace(TAG_NAME, Language.LANG.denomination_value));
+                        return true;
+                    }
+                    if (args.length < 3) {
+                        player.sendMessage(Language.LANG.missing_value.replace(TAG_NAME, Language.LANG.denomination_name));
+                        return true;
+                    }
+                    String name = args[2];
+                    String pluralName = name;
+                    if (args.length > 3) {
+                        pluralName = args[3];
+                    }
+
+                    // Configuration update hack
+                    FileConfiguration configuration = Gringotts.instance.getConfig();
+                    List list = configuration.getList("currency.denominations");
+                    Map<String, Object> newDenomination = new LinkedHashMap<>();
+                    newDenomination.put("material", heldItem.getType().name());
+                    newDenomination.put("value", value);
+                    newDenomination.put("unit-name", name);
+                    newDenomination.put("unit-name-plural", pluralName);
+                    newDenomination.put("meta", heldItem.getItemMeta());
+                    list.add(newDenomination);
+                    configuration.set("currency.denominations", list);
+                    try {
+                        configuration.save(new File(Gringotts.instance.getDataFolder(), "config.yml"));
+                        Gringotts.instance.reloadConfig();
+                        player.sendMessage(Language.LANG.added_denomination.replace(TAG_NAME, pluralName));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return true;
+                }
+                break;
             case "den":
             case "denominations": {
                 if (sender instanceof Player) {
