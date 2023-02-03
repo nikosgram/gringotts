@@ -49,10 +49,10 @@ public class AccountInventory {
 
         // try denominations from largest to smallest
         for (Denomination denomination : Configuration.CONF.getCurrency().getDenominations()) {
-            if (denomination.getValue() <= remaining) {
+            if (denomination.getValue() <= remaining && denomination.getValue() > 0) {
                 ItemStack stack = new ItemStack(denomination.getKey().type);
                 int stackSize = stack.getMaxStackSize();
-                long denItemCount = denomination.getValue() > 0 ? remaining / denomination.getValue() : 0;
+                long denItemCount = remaining / denomination.getValue();
 
                 // add stacks in this denomination until stuff is returned
                 while (denItemCount > 0) {
