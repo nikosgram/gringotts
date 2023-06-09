@@ -194,16 +194,20 @@ public enum Configuration {
 
                     ItemStack denomType = itemByName(materialName);
 
+                    // Allow loading a serialized meta block and overriding it with the other fields
+                    ItemMeta meta = denomConf.getSerializable("meta", ItemMeta.class);
+                    // Default to the item's default meta if the one in the config doesn't exist
+                    if (meta == null) {
+                        meta = denomType.getItemMeta();
+                    }
+
                     if (denomConf.contains("damage")) {
                         short damage = (short) denomConf.getInt("damage"); // returns 0 when path is unset
-                        ItemMeta meta = denomType.getItemMeta();
                         if (meta != null) {
                             ((Damageable) meta).setDamage(damage);
                             denomType.setItemMeta(meta);
                         }
                     }
-
-                    ItemMeta meta = denomType.getItemMeta();
 
                     if (meta == null) {
                         continue;

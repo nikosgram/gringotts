@@ -17,6 +17,14 @@ vault_balance: "Vault balance: %balance"
 inv_balance: "Inventory balance: %balance"
 invalidaccount: "Invalid account: %player"
 reload: "Gringotts: Reloaded configuration!"
+added_denomination: "Added denomination %name"
+
+errors:
+    denominationValue: "denomination value"
+    denominationName: "denomination name"
+    holdItem: "Please hold an item"
+    missingValue: "Missing argument: %name"
+    invalidValue: "Invalid argument '%value' is not a valid number for %name"
 
 pay:
     success:
