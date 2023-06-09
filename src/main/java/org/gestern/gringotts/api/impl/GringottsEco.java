@@ -12,6 +12,7 @@ import org.gestern.gringotts.api.*;
 import org.gestern.gringotts.currency.GringottsCurrency;
 import org.gestern.gringotts.data.DAO;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -20,7 +21,6 @@ import java.util.UUID;
  * The type Gringotts eco.
  */
 public class GringottsEco implements Eco {
-
     private static final String               TAG_PLAYER    = "player";
     private final        AccountHolderFactory accountOwners = Gringotts.instance.getAccountHolderFactory();
     private final        DAO                  dao           = Gringotts.instance.getDao();
@@ -346,6 +346,11 @@ public class GringottsEco implements Eco {
         @Override
         public boolean hasPermission(String permission) {
             return false;
+        }
+
+        @Override
+        public Collection<AccountChest> getVaultChests() {
+            return Collections.emptyList();
         }
 
         /**
@@ -698,6 +703,11 @@ public class GringottsEco implements Eco {
         @Override
         public boolean hasPermission(String permission) {
             return acc.owner.hasPermission(permission);
+        }
+
+        @Override
+        public Collection<AccountChest> getVaultChests() {
+            return acc.getVaultChests();
         }
 
         /**

@@ -1,6 +1,9 @@
 package org.gestern.gringotts.api;
 
 import org.bukkit.Location;
+import org.gestern.gringotts.AccountChest;
+
+import java.util.Collection;
 
 /**
  * Defines actions possible on an account in an economy.
@@ -167,4 +170,11 @@ public interface Account {
      * @return whenever the account owner has the permission
      */
     boolean hasPermission(String permission);
+
+    /**
+     * Returns a collection of all the relevant chest vaults of this account
+     *
+     * @return relevant chest vaults
+     */
+    Collection<AccountChest> getVaultChests();
 }

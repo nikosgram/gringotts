@@ -32,6 +32,7 @@ import org.gestern.gringotts.api.impl.VaultConnector;
 import org.gestern.gringotts.commands.GringottsExecutor;
 import org.gestern.gringotts.commands.MoneyAdminExecutor;
 import org.gestern.gringotts.commands.MoneyExecutor;
+import org.gestern.gringotts.commands.VaultCommand;
 import org.gestern.gringotts.currency.Denomination;
 import org.gestern.gringotts.data.DAO;
 import org.gestern.gringotts.data.DerbyDAO;
@@ -302,6 +303,7 @@ public class Gringotts extends JavaPlugin {
     }
 
     private void registerCommands() {
+        registerCommand("vault", new VaultCommand());
         registerCommand(new String[]{"balance", "money"}, new MoneyExecutor());
         registerCommand("moneyadmin", new MoneyAdminExecutor());
         registerCommand("gringotts", new GringottsExecutor(this));

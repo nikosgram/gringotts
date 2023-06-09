@@ -16,6 +16,11 @@ softdepend: [PlaceholderAPI]
 loadbefore: [Reserve, Vault]
 
 commands:
+  vault:
+    description: Accessing your vault commands
+    usage: /vault
+    aliases: v
+    permission: gringotts.command.vault
   balance:
     description: Shows your vault balance
     usage: /balance
@@ -79,6 +84,8 @@ permissions:
       gringotts.transfer: true
       gringotts.command.withdraw: true
       gringotts.command.deposit: true
+      gringotts.command.vault: true
+      gringotts.command.vault.list: true
   gringotts.transfer:
     description: Allow money transfer commands
     default: true
@@ -88,6 +95,15 @@ permissions:
   gringotts.command.deposit:
     description: Allow deposit of money to chest storage from inventory.
     default: true
+  gringotts.command.vault:
+    description: Provides access to the /vault command
+    default: true
+  gringotts.command.vault.list:
+    description: Provides access to the /vault list command
+    default: true
+  gringotts.command.vault.list.others:
+    description: Provides access to the /vault list <account> command
+    default: op
 
   gringotts.admin:
     description: Use all /moneyadmin commands
