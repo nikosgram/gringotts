@@ -1,6 +1,7 @@
 package org.gestern.gringotts.currency;
 
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
@@ -96,7 +97,7 @@ public class GringottsCurrency {
             return 0;
         }
 
-        if (Configuration.CONF.includeShulkerBoxes && stack.getType() == Material.SHULKER_BOX) {
+        if (Configuration.CONF.includeShulkerBoxes && Tag.SHULKER_BOXES.isTagged(stack.getType())) {
             if (stack.getItemMeta() instanceof BlockStateMeta) {
                 BlockStateMeta blockState = (BlockStateMeta) stack.getItemMeta();
                 if (blockState.getBlockState() instanceof ShulkerBox) {

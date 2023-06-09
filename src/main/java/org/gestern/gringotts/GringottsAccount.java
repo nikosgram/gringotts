@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Tag;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -298,8 +299,8 @@ public class GringottsAccount {
     }
 
     public long addToShulkerBox(long remaining, Inventory inventory) {
-        for (ItemStack itemStack : inventory.all(Material.SHULKER_BOX).values()) {
-            if (itemStack.getItemMeta() instanceof BlockStateMeta) {
+        for (ItemStack itemStack : inventory.getContents()) {
+            if (Tag.SHULKER_BOXES.isTagged(itemStack.getType()) && itemStack.getItemMeta() instanceof BlockStateMeta) {
                 BlockStateMeta blockState = (BlockStateMeta) itemStack.getItemMeta();
                 if (blockState.getBlockState() instanceof ShulkerBox) {
                     ShulkerBox shulkerBox = (ShulkerBox) blockState.getBlockState();
@@ -321,8 +322,8 @@ public class GringottsAccount {
     }
 
     public long removeFromShulkerBox(long remaining, Inventory inventory) {
-        for (ItemStack itemStack : inventory.all(Material.SHULKER_BOX).values()) {
-            if (itemStack.getItemMeta() instanceof BlockStateMeta) {
+        for (ItemStack itemStack : inventory.getContents()) {
+            if (Tag.SHULKER_BOXES.isTagged(itemStack.getType()) && itemStack.getItemMeta() instanceof BlockStateMeta) {
                 BlockStateMeta blockState = (BlockStateMeta) itemStack.getItemMeta();
                 if (blockState.getBlockState() instanceof ShulkerBox) {
                     ShulkerBox shulkerBox = (ShulkerBox) blockState.getBlockState();
