@@ -7,8 +7,6 @@ As usual with Bukkit plugins, the configuration is in the config.yml in the plug
 
 Please refer to the [default config.yml](https://github.com/MinecraftWars/Gringotts/blob/master/config.yml) for a complete example.
 
-**Note: Gringotts will currently not work correctly with Towny if you set the `economy.closed_economy` in the Towny configuration.**
-
 ### Language ###
 The `language` option allows you to set one of Gringotts' supported language for interaction messages with players. Currently supported options are `custom` (default/english) and `de` (German). See below on how to modify custom messages to your preferences.
 
@@ -97,11 +95,8 @@ This would add to every transaction 1 plus 5% of the transaction value. For inst
 
 	startingbalance:
 	  player: 0
-	  faction: 0
-	  town: 0
-	  nation: 0
 	
-Amount of virtual money to gift to players on first join, or accounts with other plugins upon creation. This money may be spent as usual, but will not be backed by physical currency. Enable these if you want your players/factions/etc. to start with some money that can't be lost or stolen.
+Amount of virtual money to gift to players on first join, or accounts with other plugins upon creation. This money may be spent as usual, but will not be backed by physical currency. Enable these if you want your players. to start with some money that can't be lost or stolen.
   
 ---
 
@@ -153,34 +148,6 @@ Allow players to create vaults for other players.
       default: true
 
 Allow players to create vaults for their own account.
-
----
-
-    gringotts.createvault.faction:
-      default: true
-
-Allow players to create vaults for their faction (Factions only).
-
----
-
-    gringotts.createvault.town:
-      default: true
-
-Allow players to create vaults for their town (Towny only).
-
----
-
-    gringotts.createvault.nation:
-      default: true
-
-Allow players to create vaults for their nation (Towny only).
-
----
-
-    gringotts.createvault.worldguard:
-      default: true
-
-Allow players to create vaults for WorldGuard regions they are member of.
 
 ### Vault usage
 

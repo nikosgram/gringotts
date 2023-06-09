@@ -23,7 +23,7 @@ Features
 Usage
 -----
 Storing money in an account requires a Gringotts vault. A vault consists of a container, which can be either chest,
-dispenser or furnace, and a sign above or on it declaring it as a vault. A player or faction may claim any number of
+dispenser or furnace, and a sign above or on it declaring it as a vault. A player may claim any number of
 vaults. Vaults are not protected from access through other players. If you would like them to be, you may use additional
 plugins such as [LWC](https://dev.bukkit.org/projects/lwc/) or [WorldGuard](https://dev.bukkit.org/projects/worldguard/)
 .
