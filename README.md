@@ -79,7 +79,7 @@ Metrics
   <img src="https://contrib.rocks/image?repo=nikosgram/gringotts"  alt="Gringotts contributors"/>
 </a>
 
-Made with [contrib.rocks](https://contrib.rocks).
+Made with [contrib.rocks](https://contrib.rocks/preview?repo=nikosgram%2Fgringotts)
 
 License
 -------
