@@ -3,6 +3,7 @@ package org.gestern.gringotts.commands;
 import com.google.common.collect.Lists;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
@@ -24,25 +25,25 @@ import org.gestern.gringotts.api.PlayerAccount;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VaultCommand extends GringottsAbstractExecutor {
     private static final List<String> commands = Collections.singletonList("list");
 
-    private BaseComponent[] getVaultsComponent(Account account) {
-        return getVaultsComponent(account, "");
+    private BaseComponent[] getVaultsComponent(CommandSender sender, Account account) {
+        return getVaultsComponent(sender, account, "");
     }
 
-    private BaseComponent[] getVaultsComponent(Account account, String titlePrefix) {
+    private BaseComponent[] getVaultsComponent(CommandSender sender, Account account, String titlePrefix) {
         Collection<AccountChest> chests = account.getVaultChests();
 
         ComponentBuilder builder = new ComponentBuilder().append(titlePrefix + "Vaults")
                 .bold(true)
                 .reset()
                 .append("\n\n");
+
+        Map<String, Collection<BaseComponent[]>> groupedValues = new HashMap<>();
 
         for (AccountChest chest : chests) {
             Location chestLocation = chest.chestLocation();
@@ -57,24 +58,74 @@ public class VaultCommand extends GringottsAbstractExecutor {
                 continue;
             }
 
+            String worldName = chestWorld.getName();
+
             BaseComponent[] balanceComponent = new ComponentBuilder("Balance: ").append(eco.currency()
                             .format(Configuration.CONF.getCurrency().getDisplayValue(chest.balance())))
                     .bold(true)
                     .create();
 
-            String locationString = String.format("%s %d,%d,%d",
-                    chestWorld.getName(),
+            BaseComponent[] actionExplaining = new ComponentBuilder("Click to copy the location\nof the vault").create();
+
+            ClickEvent onClick = new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.format("%s %d,%d,%d",
+                    worldName,
                     chestLocation.getBlockX(),
                     chestLocation.getBlockY(),
-                    chestLocation.getBlockZ());
+                    chestLocation.getBlockZ()));
 
+            if (sender.hasPermission("minecraft.command.tp")) {
+                actionExplaining = new ComponentBuilder("Click to instantly teleport\nto the vault").create();
+
+                onClick = new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format(
+                        "/execute in %s run teleport %d %d %d",
+                        chestWorld.getKey(),
+                        chestLocation.getBlockX(),
+                        chestLocation.getBlockY(),
+                        chestLocation.getBlockZ()
+                ));
+            }
+
+            if (!groupedValues.containsKey(worldName)) {
+                groupedValues.put(worldName, new ArrayList<>());
+            }
+
+            groupedValues.get(worldName).add(
+                    new ComponentBuilder(" ")
+                            .reset()
+                            .append(
+                                    new ComponentBuilder(String.format("%d, %d, %d",
+                                            chestLocation.getBlockX(),
+                                            chestLocation.getBlockY(),
+                                            chestLocation.getBlockZ()))
+                                            .event(onClick)
+                                            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                                    new Text(new ComponentBuilder()
+                                                            .append(balanceComponent)
+                                                            .reset()
+                                                            .append("\n")
+                                                            .append(actionExplaining)
+                                                            .create())))
+                                            .underlined(true)
+                                            .color(ChatColor.DARK_GREEN)
+                                            .create()
+                            )
+                            .append("\n")
+                            .create()
+            );
+        }
+
+        for (Map.Entry<String, Collection<BaseComponent[]>> entry : groupedValues.entrySet()) {
             builder.reset()
-                    .append(new ComponentBuilder().append(new ComponentBuilder(locationString).color(
-                                    ChatColor.DARK_GREEN)
-                            .underlined(true)
-                            .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                    new Text(new ComponentBuilder().append(balanceComponent).create())))
-                            .create()).append("\n").create());
+                    .append(entry.getKey())
+                    .reset()
+                    .append("\n");
+
+            for (BaseComponent[] baseComponents : entry.getValue()) {
+                builder.append(baseComponents)
+                        .reset();
+            }
+
+            builder.reset().append("\n");
         }
 
         return builder.create();
@@ -85,14 +136,24 @@ public class VaultCommand extends GringottsAbstractExecutor {
                              @NotNull Command command,
                              @NotNull String s,
                              @NotNull String[] args) {
-        testPermission(sender, command, "gringotts.command.vault");
+        if (!sender.hasPermission("gringotts.command.vault")) {
+            sender.sendMessage("I'm sorry, but you do not have permission to perform this command. " +
+                    "Please contact the server administrators if you believe that this is a mistake.");
+
+            return true;
+        }
 
         if (args.length == 0) {
             return false;
         }
 
         if (args[0].equalsIgnoreCase("list")) {
-            testPermission(sender, command, "gringotts.command.vault.list");
+            if (!sender.hasPermission("gringotts.command.vault.list")) {
+                sender.sendMessage("I'm sorry, but you do not have permission to perform this command. " +
+                        "Please contact the server administrators if you believe that this is a mistake.");
+
+                return true;
+            }
 
             if (args.length == 1) {
                 if (!(sender instanceof Player)) {
@@ -113,7 +174,7 @@ public class VaultCommand extends GringottsAbstractExecutor {
                 meta.setAuthor("Gringotts");
                 meta.setTitle("Vaults");
 
-                meta.spigot().addPage(getVaultsComponent(account));
+                meta.spigot().addPage(getVaultsComponent(player, account));
 
                 book.setItemMeta(meta);
 
@@ -121,7 +182,9 @@ public class VaultCommand extends GringottsAbstractExecutor {
 
                 return true;
             } else {
-                testPermission(sender, command, "gringotts.command.vault.list.others");
+                if (!sender.hasPermission("gringotts.command.vault.list.others")) {
+                    return false;
+                }
 
                 OfflinePlayer targetPlayer = Util.getOfflinePlayer(args[1]);
 
@@ -138,7 +201,7 @@ public class VaultCommand extends GringottsAbstractExecutor {
                 Account account = eco.player(targetPlayer.getUniqueId());
 
                 if (!(sender instanceof Player)) {
-                    sender.spigot().sendMessage(getVaultsComponent(account, targetPlayer.getName() + "'s "));
+                    sender.spigot().sendMessage(getVaultsComponent(sender, account, targetPlayer.getName() + "'s "));
                 } else {
                     ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 
@@ -148,7 +211,7 @@ public class VaultCommand extends GringottsAbstractExecutor {
                     meta.setAuthor("Gringotts");
                     meta.setTitle(targetPlayer.getName() + "'s Vaults");
 
-                    meta.spigot().addPage(getVaultsComponent(account, targetPlayer.getName() + "'s "));
+                    meta.spigot().addPage(getVaultsComponent(sender, account, targetPlayer.getName() + "'s "));
 
                     book.setItemMeta(meta);
 
