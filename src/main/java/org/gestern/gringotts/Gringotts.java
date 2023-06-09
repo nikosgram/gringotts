@@ -27,7 +27,6 @@ import org.gestern.gringotts.api.Eco;
 import org.gestern.gringotts.api.dependency.Dependency;
 import org.gestern.gringotts.api.dependency.DependencyProvider;
 import org.gestern.gringotts.api.impl.GringottsEco;
-import org.gestern.gringotts.api.impl.ReserveConnector;
 import org.gestern.gringotts.api.impl.VaultConnector;
 import org.gestern.gringotts.commands.GringottsExecutor;
 import org.gestern.gringotts.commands.MoneyAdminExecutor;
@@ -119,12 +118,11 @@ public class Gringotts extends JavaPlugin {
             accounting = new Accounting();
             eco        = new GringottsEco();
 
-            if (!(this.dependencies.hasDependency("vault") ||
-                    this.dependencies.hasDependency("reserve"))) {
+            if (!(this.dependencies.hasDependency("vault"))) {
                 Bukkit.getPluginManager().disablePlugin(this);
 
                 getLogger().warning(
-                        "Neither Vault or Reserve was found. Other plugins may not be able to access Gringotts accounts."
+                        "Vault was found. Other plugins may not be able to access Gringotts accounts."
                 );
 
                 return;
@@ -144,12 +142,6 @@ public class Gringotts extends JavaPlugin {
                 );
 
                 getLogger().info("Registered Vault interface.");
-            }
-
-            if (this.dependencies.hasDependency("reserve")) {
-                ReserveConnector.registerProviderSafely();
-
-                getLogger().info("Registered Reserve interface.");
             }
 
             registerMetrics();
@@ -194,12 +186,6 @@ public class Gringotts extends JavaPlugin {
                 "Vault",
                 "net.milkbowl.vault.Vault",
                 "1.7"
-        );
-        this.registerGenericDependency(
-                "reserve",
-                "Reserve",
-                "net.tnemc.core.Reserve",
-                "0.1.5.0"
         );
 
         this.dependencies.onLoad();

@@ -17,8 +17,7 @@ Features
 * Direct account-to-account transfers commands
 * Optional transaction taxes
 * Fractional currency values (fixed decimal digits)
-* [Vault](https://www.spigotmc.org/resources/vault.34315/)
-  and [Reserve](https://www.spigotmc.org/resources/reserve.50739/) integration
+* [Vault](https://www.spigotmc.org/resources/vault.34315/) integration
 
 Usage
 -----

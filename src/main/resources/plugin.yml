@@ -13,7 +13,7 @@ awareness:
   - !@UTF-8
 
 softdepend: [PlaceholderAPI]
-loadbefore: [Reserve, Vault]
+loadbefore: [Vault]
 
 commands:
   vault:
