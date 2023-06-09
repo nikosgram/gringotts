@@ -382,14 +382,6 @@ public class GringottsAccount {
                 }
             }
 
-            Optional<Player> playerOpt = playerOwner();
-            if (playerOpt.isPresent()) {
-                Player player = playerOpt.get();
-
-                if (Configuration.CONF.useVaultEnderChest && Permissions.USE_VAULT_ENDERCHEST.isAllowed(player)) {
-                    balance += new AccountInventory(player.getEnderChest()).balance();
-                }
-            }
             return balance;
         };
 
