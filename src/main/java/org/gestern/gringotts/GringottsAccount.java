@@ -72,13 +72,15 @@ public class GringottsAccount {
      * @return current balance of this account in cents
      */
     public long getBalance() {
-        CompletableFuture<Long> cents     = getCents();
-        CompletableFuture<Long> playerInv = countPlayerInventory();
-        CompletableFuture<Long> chestInv  = countChestInventories();
+        CompletableFuture<Long> cents            = getCents();
+        CompletableFuture<Long> playerInv        = countPlayerInventory();
+        CompletableFuture<Long> playerEnderchest = countPlayerEnderchest();
+        CompletableFuture<Long> chestInv         = countChestInventories();
 
-        // order of combination is important, because chestInv/playerInv might have to run on main thread
+        // order of combination is important, because chestInv/playerInv/enderchest might have to run on main thread
         CompletableFuture<Long> f = chestInv
                 .thenCombine(playerInv, Long::sum)
+                .thenCombine(playerEnderchest, Long::sum)
                 .thenCombine(cents, Long::sum);
 
         return getTimeout(f);
@@ -131,6 +133,10 @@ public class GringottsAccount {
         CompletableFuture<Long> f         = cents.thenCombine(playerInv, Long::sum);
 
         return getTimeout(f);
+    }
+
+    public long getEndBalance() {
+        return getTimeout(countPlayerEnderchest());
     }
 
     /**
@@ -438,6 +444,22 @@ public class GringottsAccount {
                 Player player = playerOpt.get();
 
                 balance += new AccountInventory(player.getInventory()).balance();
+            }
+            return balance;
+        };
+
+        return callSync(callMe);
+    }
+
+    private CompletableFuture<Long> countPlayerEnderchest() {
+        Callable<Long> callMe = () -> {
+            long balance = 0;
+
+            Optional<Player> playerOpt = playerOwner();
+            if (playerOpt.isPresent() && Permissions.USE_VAULT_ENDERCHEST.isAllowed(playerOpt.get())) {
+                Player player = playerOpt.get();
+
+                balance += new AccountInventory(player.getEnderChest()).balance();
             }
             return balance;
         };

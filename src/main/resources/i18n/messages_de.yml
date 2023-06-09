@@ -3,6 +3,7 @@ noperm: "Du hast keine Berechtigung, Geld zu überweisen."
 balance: "Du hast zur Zeit insgesamt %balance"
 vault_balance: "In Tresoren: %balance"
 inv_balance: "Im Inventar: %balance"
+end_balance: "Im Enderchest: %balance"
 invalidaccount: "Ungültiger Spieler: %player"
 reload: "Gringotts: Einstellungen neu geladen!"
 

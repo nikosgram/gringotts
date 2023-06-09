@@ -74,6 +74,13 @@ public interface Account {
     double invBalance();
 
     /**
+     * Return the enderchest balance of this account.
+     *
+     * @return the enderchest balance of this account.
+     */
+    double endBalance();
+
+    /**
      * Return whether this account has at least the specified amount.
      *
      * @param value the amount to check

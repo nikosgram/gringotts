@@ -67,3 +67,4 @@ usevault:
 balance:
   show-vault: true
   show-inventory: true
+  show-enderchest: true

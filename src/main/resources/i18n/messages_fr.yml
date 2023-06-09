@@ -3,6 +3,7 @@ noperm: "Vous n'avez pas la permission de transférer de l'argent."
 balance: "Votre solde est de : %balance"
 vault_balance: "Solde du coffre-fort: %balance"
 inv_balance: "Solde de l'inventaire: %balance"
+end_balance: "Solde de l'enderchest: %balance"
 invalidaccount: "Compte invalide : %player"
 reload: "Gringotts: Configuration rechargée !"
 

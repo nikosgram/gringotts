@@ -22,6 +22,7 @@ public enum Language {
     public String balance;
     public String vault_balance;
     public String inv_balance;
+    public String end_balance;
     public String invalid_account;
     public String reload;
     public String added_denomination;
@@ -84,6 +85,9 @@ public enum Language {
         LANG.inv_balance = translator.apply(
                 "inv_balance",
                 "Inventory balance: %balance");
+        LANG.end_balance = translator.apply(
+                "end_balance",
+                "Enderchest balance: %balance");
         LANG.invalid_account = translator.apply(
                 "invalidaccount",
                 "Invalid account: %player");

@@ -253,6 +253,11 @@ public class GringottsEco implements Eco {
             return 0;
         }
 
+        @Override
+        public double endBalance() {
+            return 0;
+        }
+
         /**
          * Has boolean.
          *
@@ -590,6 +595,11 @@ public class GringottsEco implements Eco {
         @Override
         public double invBalance() {
             return Configuration.CONF.getCurrency().getDisplayValue(acc.getInvBalance());
+        }
+
+        @Override
+        public double endBalance() {
+            return Configuration.CONF.getCurrency().getDisplayValue(acc.getEndBalance());
         }
 
         /**

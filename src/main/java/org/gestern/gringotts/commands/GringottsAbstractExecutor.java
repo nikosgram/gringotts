@@ -180,6 +180,10 @@ public abstract class GringottsAbstractExecutor implements TabExecutor {
         if (Configuration.CONF.balanceShowInventory) {
             account.message(Language.LANG.inv_balance.replace(TAG_BALANCE, eco.currency().format(account.invBalance())));
         }
+
+        if (Configuration.CONF.balanceShowEnderchest && account.hasPermission(Permissions.USE_VAULT_ENDERCHEST.node)) {
+            account.message(Language.LANG.end_balance.replace(TAG_BALANCE, eco.currency().format(account.endBalance())));
+        }
     }
 
     public List<String> suggestAccounts(String arg) {
