@@ -9,7 +9,6 @@
 # sender stands for the message the one executing the command gets, target for the other person who is affected.
 # Errors and other messages are only displayed for the one executing the command
 
-
 playeronly: "This command can only be run by a player."
 noperm: "You do not have permission to transfer money."
 balance: "Your current balance: %balance"
@@ -67,6 +66,3 @@ plugins:
         insufficientSpace: "Insufficient space."
         unknownError: "Unknown failure."
         notImplemented: "Gringotts does not support banks"
-    faction:
-        noFactionVaultPerm: "You do not have permission to create a faction vault here."
-        notInFaction: "Cannot create faction vault: You are not in a faction."

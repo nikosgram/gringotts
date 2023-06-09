@@ -93,29 +93,6 @@ public class GringottsEco implements Eco {
     }
 
     /**
-     * Town account.
-     *
-     * @param id the id
-     * @return the account
-     */
-    @Override
-    public Account town(String id) {
-        return custom("town", id);
-
-    }
-
-    /**
-     * Nation account.
-     *
-     * @param id the id
-     * @return the account
-     */
-    @Override
-    public Account nation(String id) {
-        return custom("nation", id);
-    }
-
-    /**
      * Currency currency.
      *
      * @return the currency

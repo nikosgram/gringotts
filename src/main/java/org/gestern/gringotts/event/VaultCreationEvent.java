@@ -7,7 +7,7 @@ import org.gestern.gringotts.accountholder.AccountHolder;
 
 /**
  * Event that is thrown after Gringotts detects a vault creation.
- * When thrown, it includes the type of the vault, for example "player" or "faction"
+ * When thrown, it includes the type of the vault, for example "player"
  * and is set to invalid with an empty message.
  * <p>
  * Listeners may set the event to valid, which will cause a vault of the given type to be

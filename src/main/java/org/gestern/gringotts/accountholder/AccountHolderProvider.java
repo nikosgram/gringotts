@@ -12,7 +12,6 @@ import java.util.UUID;
 /**
  * Provides AccountHolder objects for a given id.
  * An AccountHolderProvider has its own internal mapping of ids to account holders.
- * For example, a Factions provider would return a FactionAccountHolder object when given the faction's id.
  *
  * @author jast
  */

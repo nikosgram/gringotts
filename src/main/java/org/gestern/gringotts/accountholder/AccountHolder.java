@@ -2,7 +2,7 @@ package org.gestern.gringotts.accountholder;
 
 /**
  * An account holder.
- * Can be a player or another type of entity able to participate in the economy, for instance a faction.
+ * Can be a player or another type of entity able to participate in the economy.
  * <p>
  * To function correctly within Gringotts, implementors must provide a working equals and hashCode method.
  *
@@ -30,7 +30,7 @@ public interface AccountHolder {
     boolean equals(Object other);
 
     /**
-     * Type of the account holder. For instance "faction" or "player".
+     * Type of the account holder. For instance "player".
      *
      * @return account holder type
      */
@@ -38,7 +38,7 @@ public interface AccountHolder {
 
     /**
      * A unique identifier for the account holder.
-     * For players, this is simply the name. For factions, it is their id.
+     * For players, this is simply the name.
      *
      * @return unique account holder id
      */

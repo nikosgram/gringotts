@@ -58,11 +58,6 @@ public enum Language {
     public String vault_created;
     public String vault_error;
     public String vault_noVaultPerm;
-    //faction plugin
-    public String plugin_faction_noVaultPerm;
-    public String plugin_faction_notInFaction;
-    //worldguard plugin
-    public String plugin_worldguard_noVaultPerm;
     //vault plugin
     public String plugin_vault_insufficientFunds;
     public String plugin_vault_insufficientSpace;
@@ -188,20 +183,6 @@ public enum Language {
         LANG.vault_error = translator.apply(
                 "vault.error",
                 "Failed to create vault.");
-
-        //faction plugin
-        LANG.plugin_faction_noVaultPerm = translator.apply(
-                "plugins.faction.noFactionVaultPerm",
-                "You do not have permission to create a faction vault here.");
-        LANG.plugin_faction_notInFaction = translator.apply(
-                "plugins.faction.notInFaction",
-                "Cannot create faction vault: You are not in a faction.");
-
-
-        //worldguard plugin
-        LANG.plugin_worldguard_noVaultPerm = translator.apply(
-                "plugins.worldguard.noFactionVaultPerm",
-                "You do not have permission to create a region vault here.");
 
         //vault plugin
         LANG.plugin_vault_insufficientFunds = translator.apply(

@@ -53,22 +53,6 @@ public interface Eco {
     Account custom(String type, String id);
 
     /**
-     * Access a Towny town account with the given id.
-     *
-     * @param id /name of a Towny town
-     * @return account for a Towny town
-     */
-    Account town(String id);
-
-    /**
-     * Access a Towny nation account with the given id.
-     *
-     * @param id id/name of a Towny nation
-     * @return account for a Towny nation with the given id.
-     */
-    Account nation(String id);
-
-    /**
      * The currency for this Economy.
      *
      * @return The currency for this Economy.

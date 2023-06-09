@@ -51,20 +51,12 @@ permissions:
     default: true
     children:
       gringotts.createvault.player: true
-      gringotts.createvault.town: true
-      gringotts.createvault.nation: true
 
   gringotts.createvault.admin:
     description: Create vault for other players/accounts
     default: op
   gringotts.createvault.player:
     description: Create player vaults
-    default: true
-  gringotts.createvault.town:
-    description: Create town vaults (Towny only)
-    default: true
-  gringotts.createvault.nation:
-    description: Create nation vaults (Towny only)
     default: true
 
   gringotts.usevault:

@@ -47,6 +47,3 @@ plugins:
         insufficientSpace: "Espace insuffisant."
         unknownError: "Erreur inconnue."
         notImplemented: "Gringotts ne prend pas en charge les banques."
-    faction:
-        noFactionVaultPerm: "Vous n'avez pas la permission de créer un coffre-fort de faction ici."
-        notInFaction: "Impossible de créer un coffre-fort de faction : Vous n'êtes pas dans une faction."
