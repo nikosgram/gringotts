@@ -43,4 +43,12 @@ public interface AccountHolder {
      * @return unique account holder id
      */
     String getId();
+
+    /**
+     * Checks whenever the account owner has the following permission
+     *
+     * @param permission the required permission
+     * @return whenever the account owner has the permission
+     */
+    boolean hasPermission(String permission);
 }

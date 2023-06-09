@@ -338,6 +338,11 @@ public class GringottsEco implements Eco {
             // do nothing - no owner on this
         }
 
+        @Override
+        public boolean hasPermission(String permission) {
+            return false;
+        }
+
         /**
          * Add owner bank account.
          *
@@ -678,6 +683,11 @@ public class GringottsEco implements Eco {
         @Override
         public void message(String message) {
             acc.owner.sendMessage(message);
+        }
+
+        @Override
+        public boolean hasPermission(String permission) {
+            return acc.owner.hasPermission(permission);
         }
 
         /**

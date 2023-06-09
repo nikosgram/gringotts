@@ -82,4 +82,17 @@ public class PlayerAccountHolder implements AccountHolder {
     public UUID getUUID() {
         return accountHolder.getUniqueId();
     }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        if (accountHolder.isOnline()) {
+            Player player = accountHolder.getPlayer();
+
+            if (player != null) {
+                return player.hasPermission(permission);
+            }
+        }
+
+        return false;
+    }
 }

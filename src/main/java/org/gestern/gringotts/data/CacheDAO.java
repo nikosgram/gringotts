@@ -67,6 +67,11 @@ public class CacheDAO implements DAO {
                 public String getId() {
                     return owner.getType() + "-" + owner.getName();
                 }
+
+                @Override
+                public boolean hasPermission(String permission) {
+                    return false;
+                }
             })) {
                 renameAccount(owner.getType(), owner.getType() + "-" + owner.getName(), owner.getId());
 
