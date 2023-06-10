@@ -122,7 +122,7 @@ public class Gringotts extends JavaPlugin {
                 Bukkit.getPluginManager().disablePlugin(this);
 
                 getLogger().warning(
-                        "Vault was found. Other plugins may not be able to access Gringotts accounts."
+                        "Vault was not found. Other plugins may not be able to access Gringotts accounts."
                 );
 
                 return;
