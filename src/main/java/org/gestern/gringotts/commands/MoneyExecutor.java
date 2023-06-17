@@ -47,6 +47,8 @@ public class MoneyExecutor extends GringottsAbstractExecutor {
             return true;
         }
 
+        if (args.length < 2) return false;
+
         String command = args[0];
 
         switch (command.toLowerCase()) {
@@ -58,7 +60,8 @@ public class MoneyExecutor extends GringottsAbstractExecutor {
 
                     return true;
                 } catch (NumberFormatException ignored) {
-                    return false;
+                    player.sendMessage(Language.LANG.invalid_number.replace("%value", args[1]));
+                    return true;
                 }
             }
             case "deposit": {
@@ -69,27 +72,32 @@ public class MoneyExecutor extends GringottsAbstractExecutor {
 
                     return true;
                 } catch (NumberFormatException ignored) {
-                    return false;
+                    player.sendMessage(Language.LANG.invalid_number.replace("%value", args[1]));
+                    return true;
                 }
             }
             case "send": {
+                if (args.length < 3) return false;
                 try {
                     double value = Double.parseDouble(args[2]);
 
                     // money send <player> <amount>
                     return pay(player, value, args[1]);
                 } catch (NumberFormatException ignored) {
-                    return false;
+                    player.sendMessage(Language.LANG.invalid_number.replace("%value", args[2]));
+                    return true;
                 }
             }
             case "pay": {
+                if (args.length < 3) return false;
                 try {
                     double value = Double.parseDouble(args[1]);
 
                     // money pay <amount> <player>
                     return pay(player, value, args[2]);
                 } catch (NumberFormatException ignored) {
-                    return false;
+                    player.sendMessage(Language.LANG.invalid_number.replace("%value", args[1]));
+                    return true;
                 }
             }
         }

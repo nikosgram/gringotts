@@ -26,6 +26,7 @@ public enum Language {
     public String invalid_account;
     public String reload;
     public String added_denomination;
+    public String invalid_number;
 
     // Adding a denomination
     public String hold_item;
@@ -114,6 +115,9 @@ public enum Language {
         LANG.denomination_value = translator.apply(
                 "errors.denominationValue",
                 "Invalid argument '%value' is not a valid number for denomination value");
+        LANG.invalid_number = translator.apply(
+                "errors.invalidNumber",
+                "Invalid argument: '%value' is not a number!");
 
         //pay command
         LANG.pay_success_sender = translator.apply(
