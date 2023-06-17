@@ -25,6 +25,7 @@ errors:
     holdItem: "Please hold an item"
     missingValue: "Missing argument: %name"
     invalidValue: "Invalid argument '%value' is not a valid number for %name"
+    invalidNumber: "Invalid argument: '%value' is not a number!"
 
 pay:
     success:

@@ -6,6 +6,15 @@ inv_balance: "Solde de l'inventaire: %balance"
 end_balance: "Solde de l'enderchest: %balance"
 invalidaccount: "Compte invalide : %player"
 reload: "Gringotts: Configuration rechargée !"
+added_denomination: "Coupure ajoutée : %name"
+
+errors:
+    denominationValue: "valeur de la coupure"
+    denominationName: "nom de la coupure"
+    holdItem: "Veuillez tenir un objet"
+    missingValue: "Argument manquant: %name"
+    invalidValue: "Argument invalide '%value' n'est pas un nombre valide pour %name"
+    invalidNumber: "Argument invalide : '%value' n'est pas un nombre !"
 
 pay:
     success:
