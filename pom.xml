@@ -96,7 +96,9 @@
                         </phase>
                         <configuration>
                             <target>
-                                <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\plugins\${project.artifactId}.jar"/>
+                                <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\1.19.2\plugins\${project.artifactId}.jar"/>
+                                <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\1.18.2\plugins\${project.artifactId}.jar"/>
+                                <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\1.20.1\plugins\${project.artifactId}.jar"/>
                             </target>
                         </configuration>
                         <goals>
@@ -112,7 +114,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.2-R0.1-SNAPSHOT</version>
+            <version>1.18.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

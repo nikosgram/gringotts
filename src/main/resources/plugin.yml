@@ -7,7 +7,7 @@ main: org.gestern.gringotts.Gringotts
 load: STARTUP
 database: true
 
-api-version: "1.19"
+api-version: "1.18"
 
 awareness:
   - !@UTF-8
