@@ -1,19 +1,19 @@
 name: Gringotts
-authors: [jasticE, squidicuz, eXeC64, nikosgram, GroobleDierne, hhenrichsen]
+authors: [ jasticE, squidicuz, eXeC64, nikosgram, GroobleDierne, hhenrichsen ]
 website: https://github.com/nikosgram/Gringotts
 
-version: ${version}
+version: ${project.version}
 main: org.gestern.gringotts.Gringotts
 load: STARTUP
 database: true
 
 api-version: "1.18"
 
-awareness:
-  - !@UTF-8
+softdepend: [ PlaceholderAPI ]
+loadbefore: [ Vault ]
 
-softdepend: [PlaceholderAPI]
-loadbefore: [Vault]
+libraries:
+  - org.avaje:ebean:2.8.1
 
 commands:
   vault:
@@ -26,7 +26,7 @@ commands:
     usage: /balance
     aliases: money
   money:
-    aliases: [money, m]
+    aliases: [ money, m ]
     description: Money actions
     usage: |
       /money
@@ -35,7 +35,7 @@ commands:
       /money deposit <amount>
       /money send <account> <amount>
   moneyadmin:
-    aliases: [moneyadm, mad]
+    aliases: [ moneyadm, mad ]
     description: Gringotts admin actions
     usage: |
       /moneyadmin balance <[type:]account>
@@ -43,7 +43,7 @@ commands:
       /moneyadmin remove <[type:]account> <amount>
     permission: gringotts.admin
   gringotts:
-    aliases: [grin]
+    aliases: [ grin ]
     usage: |
       /gringotts reload
       /gringotts dependencies
