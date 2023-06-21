@@ -6,7 +6,10 @@ currency value and money transactions are based on actual items in Minecraft, pe
 a greater level of immersion, a generally more Minecraft-like feeling, and in the case of a PvP environment, making the
 currency itself vulnerable to raiding.
 
-Get Gringotts [from Spigot](https://www.spigotmc.org/resources/gringotts.42071/)!
+### Get Gringotts
+
+- [from Spigot](https://www.spigotmc.org/resources/gringotts.42071/)
+- [from Hangar](https://hangar.papermc.io/nikosgram/Gringotts)
 
 Features
 --------
