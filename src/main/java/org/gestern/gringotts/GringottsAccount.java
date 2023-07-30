@@ -2,7 +2,6 @@ package org.gestern.gringotts;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
 import org.bukkit.block.ShulkerBox;
@@ -206,26 +205,45 @@ public class GringottsAccount {
 
             if (remaining == 0) {
                 return TransactionResult.SUCCESS;
-            } else {
-                if (Configuration.CONF.dropOverflowingItem) {
-                    for (Denomination denomination : Configuration.CONF.getCurrency().getDenominations()) {
-                        if (denomination.getValue() <= remaining) {
-                            ItemStack stack        = new ItemStack(denomination.getKey().type);
-                            int       stackSize    = stack.getMaxStackSize();
-                            long      denItemCount = denomination.getValue() > 0 ? remaining / denomination.getValue() : 0;
-                            while (denItemCount > 0) {
-                                int remainderStackSize = denItemCount > stackSize ? stackSize : (int) denItemCount;
-                                stack.setAmount(remainderStackSize);
-                                denItemCount -= remainderStackSize;
-                                remaining -= remainderStackSize * denomination.getValue();
-                                playerOpt.get().getWorld().dropItem(playerOpt.get().getLocation(), stack);
-                            }
+            }
+
+            if (Configuration.CONF.dropOverflowingItem && playerOpt.isPresent()) {
+                for (Denomination denomination : Configuration.CONF.getCurrency().getDenominations()) {
+                    if (denomination.getValue() > remaining) {
+                        continue;
+                    }
+
+                    // noinspection ConstantValue
+                    if (denomination.getKey().type == null) {
+                        Gringotts.instance.getLogger().warning("Denomination " + denomination.getUnitName() + " has no item type set!");
+
+                        continue;
+                    }
+
+                    ItemStack stack        = new ItemStack(denomination.getKey().type);
+                    int       stackSize    = stack.getMaxStackSize();
+                    long      denItemCount = denomination.getValue() > 0 ? remaining / denomination.getValue() : 0;
+
+                    while (denItemCount > 0) {
+                        int remainderStackSize;
+
+                        if (denItemCount > stackSize) {
+                            remainderStackSize = stackSize;
+                        } else {
+                            remainderStackSize = (int) denItemCount;
                         }
+
+                        stack.setAmount(remainderStackSize);
+
+                        denItemCount -= remainderStackSize;
+                        remaining -= remainderStackSize * denomination.getValue();
+
+                        playerOpt.get().getWorld().dropItem(playerOpt.get().getLocation(), stack);
                     }
                 }
-
-                return TransactionResult.INSUFFICIENT_SPACE;
             }
+
+            return TransactionResult.INSUFFICIENT_SPACE;
         };
 
         return getTimeout(callSync(callMe));
