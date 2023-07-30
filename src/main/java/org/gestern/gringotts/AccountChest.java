@@ -186,9 +186,21 @@ public class AccountChest {
         }
 
         String[] lines = sign.getLines();
-        String   line0 = lines[0].toLowerCase().trim();
+        String   line0 = lines[0];
 
-        return !line0.matches(Configuration.CONF.vaultPattern) || lines[2] == null || lines[2].length() == 0 || chest() == null;
+        if (!line0.matches(Configuration.CONF.vaultPattern)) {
+            return true;
+        }
+
+        if (lines[2] == null) {
+            return true;
+        }
+
+        if (lines[2].isEmpty()) {
+            return true;
+        }
+
+        return chest() == null;
     }
 
     /**
