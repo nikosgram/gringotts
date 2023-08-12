@@ -8,6 +8,7 @@ load: STARTUP
 database: true
 
 api-version: "1.18"
+api: "1.18"
 
 softdepend: [ PlaceholderAPI ]
 loadbefore: [ Vault ]
@@ -19,12 +20,12 @@ commands:
   vault:
     description: Accessing your vault commands
     usage: /vault
-    aliases: v
+    aliases: [ v ]
     permission: gringotts.command.vault
   balance:
     description: Shows your vault balance
     usage: /balance
-    aliases: money
+    aliases: [ money ]
   money:
     aliases: [ money, m ]
     description: Money actions
