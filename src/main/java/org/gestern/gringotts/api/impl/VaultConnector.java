@@ -3,7 +3,6 @@ package org.gestern.gringotts.api.impl;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import net.milkbowl.vault.economy.EconomyResponse.ResponseType;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.gestern.gringotts.Gringotts;
 import org.gestern.gringotts.Util;
@@ -13,7 +12,6 @@ import org.gestern.gringotts.api.TransactionResult;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.gestern.gringotts.Language.LANG;
 

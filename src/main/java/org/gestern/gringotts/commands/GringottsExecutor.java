@@ -18,7 +18,6 @@ import org.gestern.gringotts.Gringotts;
 import org.gestern.gringotts.Language;
 import org.gestern.gringotts.api.dependency.Dependency;
 import org.gestern.gringotts.currency.Denomination;
-import org.gestern.gringotts.currency.DenominationKey;
 import org.gestern.gringotts.currency.GringottsCurrency;
 
 import java.io.File;
