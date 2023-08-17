@@ -1,5 +1,6 @@
 package org.gestern.gringotts.event;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.gestern.gringotts.accountholder.AccountHolder;
@@ -28,6 +29,8 @@ public class CalculateStartBalanceEvent extends Event {
      * @param holder the holder
      */
     public CalculateStartBalanceEvent(AccountHolder holder) {
+        super(!Bukkit.getServer().isPrimaryThread());
+
         this.holder = holder;
     }
 
