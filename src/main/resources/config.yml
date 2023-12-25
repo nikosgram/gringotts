@@ -47,6 +47,9 @@ currency:
 #        - line1
 #        - line2
 
+# check only CustomModelData
+custommodeldata-only: false
+
 # tax on /money pay transactions
 transactiontax:
   flat: 0.0
