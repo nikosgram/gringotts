@@ -198,7 +198,8 @@ public class GringottsCurrency {
     private Denomination getDenominationOf(ItemStack stack) {
         if(Configuration.CONF.custommodeldataOnly) {
             for(Denomination d : getDenominations()){
-                if(d.getKey().equals(stack,true)) return d;
+
+                if(d.getKey().equals(stack,true)) return denoms.get(d);
             }
         }
         DenominationKey d = new DenominationKey(stack);
