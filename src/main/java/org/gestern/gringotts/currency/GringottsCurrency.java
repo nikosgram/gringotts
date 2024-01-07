@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.gestern.gringotts.Configuration;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -114,7 +115,6 @@ public class GringottsCurrency {
         }
 
         Denomination d = getDenominationOf(stack);
-
         return d != null ? d.getValue() * stack.getAmount() : 0;
     }
 
@@ -198,6 +198,13 @@ public class GringottsCurrency {
      */
     private Denomination getDenominationOf(ItemStack stack) {
         DenominationKey d = new DenominationKey(stack);
+        if(Configuration.CONF.custommodeldataOnly) {
+            for(Denomination dthis : getDenominations()){
+                if(dthis.getKey().equals(d,true)) {
+                    return dthis;
+                }
+            }
+        }
 
         return denoms.get(d);
     }

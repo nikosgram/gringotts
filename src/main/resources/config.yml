@@ -47,6 +47,9 @@ currency:
 #        - line1
 #        - line2
 
+# to check CustomModelData and Material data only during validation
+custommodeldata-only: false
+
 # tax on /money pay transactions
 transactiontax:
   flat: 0.0

@@ -42,6 +42,13 @@ public enum Configuration {
     public boolean dropOverflowingItem = false;
 
     /**
+     *
+     * Check only CustomModelData for compatibility with different plugins.
+     *
+     */
+    public boolean custommodeldataOnly = false;
+
+    /**
      * Flat tax on every player-to-player transaction. This is a value in currency units.
      */
     public double transactionTaxFlat = 0;
@@ -157,6 +164,8 @@ public enum Configuration {
         parseCurrency(denomSection, savedConfig);
 
         CONF.dropOverflowingItem = savedConfig.getBoolean("drop-overflowing-item", false);
+
+        CONF.custommodeldataOnly = savedConfig.getBoolean("custommodeldata-only", false);
 
         CONF.transactionTaxFlat = savedConfig.getDouble("transactiontax.flat", 0);
         CONF.transactionTaxRate = savedConfig.getDouble("transactiontax.rate", 0);
