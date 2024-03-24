@@ -1,6 +1,7 @@
 package org.gestern.gringotts.event;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class AccountListener implements Listener {
 
-    private final Pattern vaultPattern = Pattern.compile(Configuration.CONF.vaultPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+    private final Pattern VAULT_PATTERN = Pattern.compile(Configuration.CONF.vaultPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
     /**
      * Create an account chest by adding a sign marker over it.
@@ -28,13 +29,13 @@ public class AccountListener implements Listener {
      */
     @EventHandler
     public void onSignChange(SignChangeEvent event) {
-        String line0String = event.getLine(0);
+        String line0String = ChatColor.stripColor(event.getLine(0)).trim();
 
         if (line0String == null) {
             return;
         }
 
-        Matcher match = vaultPattern.matcher(line0String);
+        Matcher match = VAULT_PATTERN.matcher(line0String);
 
         // consider only signs with proper formatting
         if (!match.matches()) {
