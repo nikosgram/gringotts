@@ -24,6 +24,11 @@ public class EBeanAccountChest {
     int z;
     @NotNull
     int account;
+    /**
+    * Virtual balance.
+    */
+   @NotNull
+   long cents;
 
     public int getId() {
         return id;
@@ -73,9 +78,17 @@ public class EBeanAccountChest {
         this.account = account;
     }
 
+    public long getCents() {
+        return this.cents;
+    }
+
+    public void setCents(long cents) {
+        this.cents = cents;
+    }
+
     @Override
     public String toString() {
-        return "EBeanAccountChest(" + account + "," + world + ": " + x + "," + y + "," + z + ")";
+        return "EBeanAccountChest(" + account + "," + cents + "," + world + ": " + x + "," + y + "," + z + ")";
     }
 
 }

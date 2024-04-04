@@ -52,7 +52,7 @@ public class EBeanDAO implements DAO {
         SqlUpdate storeChest = db.createSqlUpdate(
                 "insert into gringotts_accountchest (world,x,y,z,account) " +
                         "values (:world, :x, :y, :z, (select id from gringotts_account where owner=:owner and " +
-                        "type=:type))");
+                        "type=:type) :cents)");
 
         Sign mark = chest.sign;
         storeChest.setParameter("world", mark.getWorld().getName());
@@ -61,6 +61,7 @@ public class EBeanDAO implements DAO {
         storeChest.setParameter("z", mark.getZ());
         storeChest.setParameter("owner", chest.account.owner.getId());
         storeChest.setParameter("type", chest.account.owner.getType());
+        storeChest.setParameter("cents", chest.balance());
 
         return storeChest.execute() > 0;
     }
@@ -148,7 +149,7 @@ public class EBeanDAO implements DAO {
     @Override
     public synchronized Collection<AccountChest> retrieveChests() {
         List<SqlRow> result = db.createSqlQuery(
-                "SELECT ac.world, ac.x, ac.y, ac.z, a.type, a.owner FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id "
+                "SELECT ac.world, ac.x, ac.y, ac.z, a.type, a.owner, a.cents FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id "
         ).findList();
 
         List<AccountChest> chests = new LinkedList<>();
@@ -192,8 +193,15 @@ public class EBeanDAO implements DAO {
                     );
                 } else {
                     GringottsAccount ownerAccount = new GringottsAccount(owner);
-
-                    chests.add(new AccountChest(optionalSign.get(), ownerAccount));
+                    AccountChest chest = new AccountChest(optionalSign.get(), ownerAccount);
+                    chests.add(chest);
+                    //TODO check if chest balance differs from DB entry maybe write to a file or smth
+                    long supposedBalance = c.getLong("cents");
+                    if (supposedBalance != chest.balance()) {
+                        Gringotts.instance.getLogger().severe("Balance differs for account "
+                        + ownerId + "at location " + worldName + " " + x + "," + y + "," + z
+                        + ". Was supposed to be at" + supposedBalance + " is now at " + chest.balance());
+                    }
                 }
             } else {
                 // remove accountchest from storage if it is not a valid chest
@@ -254,7 +262,7 @@ public class EBeanDAO implements DAO {
     @Override
     public synchronized List<AccountChest> retrieveChests(GringottsAccount account) {
         // TODO ensure world interaction is done in sync task
-        SqlQuery getChests = db.createSqlQuery("SELECT ac.world, ac.x, ac.y, ac.z " +
+        SqlQuery getChests = db.createSqlQuery("SELECT ac.world, ac.x, ac.y, ac.z, ac.cents " +
                 "FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id " +
                 "WHERE a.owner = :owner and a.type = :type");
 
@@ -280,7 +288,15 @@ public class EBeanDAO implements DAO {
             );
 
             if (optionalSign.isPresent()) {
-                chests.add(new AccountChest(optionalSign.get(), account));
+                AccountChest chest = new AccountChest(optionalSign.get(), account);
+                chests.add(chest);
+                //TODO check if chest balance differs from DB entry maybe write to a file or smth
+                long supposedBalance = result.getLong("cents");
+                if (supposedBalance != chest.balance()) {
+                    Gringotts.instance.getLogger().severe("Balance differs for account "
+                    + account.owner.getId() + "at location " + worldName + " " + x + "," + y + "," + z
+                    + ". Was supposed to be at" + supposedBalance + " is now at " + chest.balance());
+                }
             } else {
                 // remove accountchest from storage if it is not a valid chest
                 deleteAccountChest(worldName, x, y, z);
