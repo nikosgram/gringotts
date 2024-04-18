@@ -347,7 +347,7 @@ public class GringottsAccount {
 
     public long removeFromShulkerBox(long remaining, Inventory inventory) {
         for (ItemStack itemStack : inventory.getContents()) {
-            if (Tag.SHULKER_BOXES.isTagged(itemStack.getType()) && itemStack.getItemMeta() instanceof BlockStateMeta) {
+            if (itemStack != null && Tag.SHULKER_BOXES.isTagged(itemStack.getType()) && itemStack.getItemMeta() instanceof BlockStateMeta) {
                 BlockStateMeta blockState = (BlockStateMeta) itemStack.getItemMeta();
                 if (blockState.getBlockState() instanceof ShulkerBox) {
                     ShulkerBox shulkerBox = (ShulkerBox) blockState.getBlockState();

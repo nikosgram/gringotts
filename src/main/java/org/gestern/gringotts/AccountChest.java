@@ -1,6 +1,7 @@
 package org.gestern.gringotts;
 
 import io.papermc.lib.PaperLib;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -10,13 +11,20 @@ import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Represents a storage unit for an account.
  *
  * @author jast
  */
 public class AccountChest {
+
+    private final Pattern VAULT_PATTERN = Pattern.compile(Configuration.CONF.vaultPattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+
     public final String           id;
+
     /**
      * Sign marking the chest as an account chest.
      */
@@ -186,9 +194,12 @@ public class AccountChest {
         }
 
         String[] lines = sign.getLines();
-        String   line0 = lines[0];
+        String   line0 = ChatColor.stripColor(lines[0]).trim();
 
-        if (!line0.matches(Configuration.CONF.vaultPattern)) {
+
+        Matcher match = VAULT_PATTERN.matcher(line0);
+
+        if (!match.matches()) {
             return true;
         }
 
