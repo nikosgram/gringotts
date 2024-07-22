@@ -352,12 +352,20 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized long retrieveCents(GringottsAccount account) {
-        // can this NPE? (probably doesn't)
-        return db.find(EBeanAccount.class)
-                .where()
-                .ieq("type", account.owner.getType())
-                .ieq("owner", account.owner.getId())
-                .findUnique().cents;
+        EBeanAccount ebeanAccount = db.find(EBeanAccount.class)
+            .where()
+            .ieq("type", account.owner.getType())
+            .ieq("owner", account.owner.getId())
+            .findUnique();
+
+        return ebeanAccount != null ? ebeanAccount.cents : 0;
+
+        // can this NPE? (probably doesn't) (IT DOES DUH -Francesco Lotti (FranGameTv) 22/07/2024)
+        //return db.find(EBeanAccount.class)
+                //.where()
+                //.ieq("type", account.owner.getType())
+                //.ieq("owner", account.owner.getId())
+                //.findUnique().cents;
     }
 
     @Override
