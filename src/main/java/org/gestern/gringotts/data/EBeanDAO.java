@@ -1,19 +1,29 @@
 package org.gestern.gringotts.data;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
+import org.gestern.gringotts.AccountChest;
+import org.gestern.gringotts.Gringotts;
+import org.gestern.gringotts.GringottsAccount;
+import org.gestern.gringotts.Util;
+import org.gestern.gringotts.accountholder.AccountHolder;
+import org.gestern.gringotts.event.CalculateStartBalanceEvent;
+
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.SqlQuery;
 import com.avaje.ebean.SqlRow;
 import com.avaje.ebean.SqlUpdate;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.Sign;
-import org.gestern.gringotts.*;
-import org.gestern.gringotts.accountholder.AccountHolder;
-import org.gestern.gringotts.event.CalculateStartBalanceEvent;
-
-import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * The type E bean dao.
@@ -22,6 +32,9 @@ public class EBeanDAO implements DAO {
     private static EBeanDAO    dao;
     private final  EbeanServer db  = Gringotts.instance.getDatabase();
     private final  Logger      log = Gringotts.instance.getLogger();
+
+
+    private List<AccountChest> allChests = new LinkedList<>();
 
     /**
      * Gets dao.
@@ -44,7 +57,7 @@ public class EBeanDAO implements DAO {
      * @return the database classes
      */
     public static List<Class<?>> getDatabaseClasses() {
-        return Arrays.asList(EBeanAccount.class, EBeanAccountChest.class);
+        return Arrays.asList(EBeanAccount.class, EBeanAccountChest.class, EBeanPendingOperation.class);
     }
 
     @Override
@@ -115,7 +128,11 @@ public class EBeanDAO implements DAO {
                         owner.getId()
                 );
 
-                return false;theoreticalBalance
+                return false;
+            }
+        }
+
+        EBeanAccount acc = new EBeanAccount();
 
         acc.setOwner(owner.getId());
         acc.setType(owner.getType());
@@ -144,6 +161,8 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized Collection<AccountChest> retrieveChests() {
+        if (allChests.size() != 0) return allChests;
+
         List<SqlRow> result = db.createSqlQuery(
                 "SELECT ac.world, ac.x, ac.y, ac.z, a.type, a.owner, ac.totalValue FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id "
         ).findList();
@@ -188,15 +207,15 @@ public class EBeanDAO implements DAO {
                             signBlock.getZ()
                     );
                 } else {
+                    long theoreticalBalance = c.getLong("cents");
                     GringottsAccount ownerAccount = new GringottsAccount(owner);
-                    AccountChest chest = new AccountChest(optionalSign.get(), ownerAccount);
+                    AccountChest chest = new AccountChest(optionalSign.get(), ownerAccount, theoreticalBalance);
                     chests.add(chest);
                     //TODO check if chest balance differs from DB entry maybe write to a file or smth
-                    long supposedBalance = c.getLong("totalValue");
-                    if (supposedBalance != chest.balance()) {
+                    if (theoreticalBalance != chest.balance()) {
                         Gringotts.instance.getLogger().severe("Balance differs for account "
                         + ownerId + "at location " + worldName + " " + x + "," + y + "," + z
-                        + ". Was supposed to be at" + supposedBalance + " is now at " + chest.balance());
+                        + ". Was supposed to be at" + theoreticalBalance + " is now at " + chest.balance());
                     }
                 }
             } else {
@@ -205,6 +224,7 @@ public class EBeanDAO implements DAO {
             }
         }
 
+        allChests = chests;
         return chests;
     }
 
@@ -218,6 +238,10 @@ public class EBeanDAO implements DAO {
         deleteChest.setParameter("y", y);
         deleteChest.setParameter("z", z);
 
+        allChests.removeIf(chest -> {
+            Location loc = chest.sign.getLocation();
+            return loc.getWorld().getName() == world && loc.getX() == x && loc.getZ() == y && loc.getZ() == z;
+        });
         return deleteChest.execute() > 0;
     }
 
@@ -266,7 +290,7 @@ public class EBeanDAO implements DAO {
         getChests.setParameter("type", account.owner.getType());
 
         List<AccountChest> chests = new LinkedList<>();
-        for (SqlRow result : getChests.findSet()) {
+        for (SqlRow result : getChests.findList()) {
             String worldName = result.getString("world");
             int x = result.getInteger("x");
             int y = result.getInteger("y");
@@ -284,14 +308,14 @@ public class EBeanDAO implements DAO {
             );
 
             if (optionalSign.isPresent()) {
-                AccountChest chest = new AccountChest(optionalSign.get(), account);
+                long theoreticalBalance = result.getLong("cents");
+                AccountChest chest = new AccountChest(optionalSign.get(), account, theoreticalBalance);
                 chests.add(chest);
                 //TODO check if chest balance differs from DB entry maybe write to a file or smth
-                long supposedBalance = result.getLong("totalValue");
-                if (supposedBalance != chest.balance()) {
+                if (theoreticalBalance != chest.balance()) {
                     Gringotts.instance.getLogger().severe("Balance differs for account "
                     + account.owner.getId() + "at location " + worldName + " " + x + "," + y + "," + z
-                    + ". Was supposed to be at" + supposedBalance + " is now at " + chest.balance());
+                    + ". Was supposed to be at" + theoreticalBalance + " is now at " + chest.balance());
                 }
             } else {
                 // remove accountchest from storage if it is not a valid chest
@@ -313,7 +337,7 @@ public class EBeanDAO implements DAO {
 
         List<String> returned = new LinkedList<>();
 
-        for (SqlRow result : getAccounts.findSet()) {
+        for (SqlRow result : getAccounts.findList()) {
             String type = result.getString("type");
             String owner = result.getString("owner");
 
@@ -339,7 +363,7 @@ public class EBeanDAO implements DAO {
 
         List<String> returned = new LinkedList<>();
 
-        for (SqlRow result : getAccounts.findSet()) {
+        for (SqlRow result : getAccounts.findList()) {
             String owner = result.getString("owner");
 
             if (owner != null) {

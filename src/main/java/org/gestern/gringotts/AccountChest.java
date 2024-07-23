@@ -1,6 +1,7 @@
 package org.gestern.gringotts;
 
 import io.papermc.lib.PaperLib;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -34,13 +35,15 @@ public class AccountChest {
      */
     public final GringottsAccount account;
 
+    private long cachedBalance;
+
     /**
      * Create Account chest based on a sign marking its position and belonging to an account.
      *
      * @param sign    the marker sign
      * @param account the account
      */
-    public AccountChest(Sign sign, GringottsAccount account) {
+    public AccountChest(Sign sign, GringottsAccount account, long cachedBalance) {
         if (sign == null || account == null) {
             throw new IllegalArgumentException(String.format(
                     "null arguments to AccountChest() not allowed. args were: sign: %s, account: %s",
@@ -52,6 +55,7 @@ public class AccountChest {
         this.sign    = sign;
         this.account = account;
         this.id      = String.format("%s_%d_%d_%d", sign.getWorld().getUID(), sign.getX(), sign.getY(), sign.getZ());
+        this.cachedBalance = cachedBalance;
     }
 
     /**
@@ -131,6 +135,8 @@ public class AccountChest {
      * @return balance of this chest
      */
     public long balance() {
+        if (!isChestLoaded()) return cachedBalance;
+
         if (updateInvalid()) {
             return 0;
         }
@@ -152,6 +158,11 @@ public class AccountChest {
      * @return amount actually added
      */
     public long add(long value) {
+        if (!isChestLoaded()) {
+            cachedBalance += value;
+            updateTheoreticalBalance(value);
+            return value;
+        }
         if (updateInvalid()) {
             return 0;
         }
@@ -170,6 +181,11 @@ public class AccountChest {
      * @return amount actually removed from this chest
      */
     public long remove(long value) {
+        if (!isChestLoaded()) {
+            cachedBalance -= Math.min(value, cachedBalance);
+            updateTheoreticalBalance(-value);
+            return Math.min(value, cachedBalance);
+        }
         if (updateInvalid()) {
             return 0;
         }
@@ -363,5 +379,18 @@ public class AccountChest {
         this.sign.setLine(2, this.account.owner.getName());
 
         this.sign.update();
+    }
+
+    /**
+     * Returns true if the chunk containing this account's chest is already loaded in memory
+     * (in fact this checks if vault's sign is loaded but we don't care)
+     * @return
+     */
+    public boolean isChestLoaded() {
+        return sign.getChunk().isLoaded();
+    }
+
+    private void updateTheoreticalBalance(long amount) {
+        // TODO emit PendingOperation and update db
     }
 }
