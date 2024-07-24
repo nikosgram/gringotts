@@ -20,18 +20,18 @@ import org.gestern.gringotts.Util;
 import org.gestern.gringotts.accountholder.AccountHolder;
 import org.gestern.gringotts.event.CalculateStartBalanceEvent;
 
-import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.SqlQuery;
-import com.avaje.ebean.SqlRow;
-import com.avaje.ebean.SqlUpdate;
+import io.ebean.Database;
+import io.ebean.SqlQuery;
+import io.ebean.SqlRow;
+import io.ebean.SqlUpdate;
 
 /**
  * The type E bean dao.
  */
 public class EBeanDAO implements DAO {
-    private static EBeanDAO    dao;
-    private final  EbeanServer db  = Gringotts.instance.getDatabase();
-    private final  Logger      log = Gringotts.instance.getLogger();
+    private static EBeanDAO dao;
+    private final Database db = Gringotts.instance.getDatabase();
+    private final Logger log = Gringotts.instance.getLogger();
 
 
     private List<AccountChest> allChests = new LinkedList<>();
@@ -62,10 +62,10 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized boolean storeAccountChest(AccountChest chest) {
-        SqlUpdate storeChest = db.createSqlUpdate(
+        SqlUpdate storeChest = db.sqlUpdate(
                 "insert into gringotts_accountchest (world,x,y,z,account) " +
                         "values (:world, :x, :y, :z, (select id from gringotts_account where owner=:owner and " +
-                        "type=:type) :totalValue)");
+                        "type=:type) :total_value)");
 
         Sign mark = chest.sign;
         storeChest.setParameter("world", mark.getWorld().getName());
@@ -74,7 +74,7 @@ public class EBeanDAO implements DAO {
         storeChest.setParameter("z", mark.getZ());
         storeChest.setParameter("owner", chest.account.owner.getId());
         storeChest.setParameter("type", chest.account.owner.getType());
-        storeChest.setParameter("totalValue", chest.balance());
+        storeChest.setParameter("total_value", chest.balance());
 
         return storeChest.execute() > 0;
     }
@@ -154,7 +154,7 @@ public class EBeanDAO implements DAO {
                 .find(EBeanAccount.class)
                 .where()
                 .ieq("type", accountHolder.getType()).ieq("owner", accountHolder.getId())
-                .findRowCount();
+                .findCount();
 
         return accCount == 1;
     }
@@ -163,8 +163,8 @@ public class EBeanDAO implements DAO {
     public synchronized Collection<AccountChest> retrieveChests() {
         if (allChests.size() != 0) return allChests;
 
-        List<SqlRow> result = db.createSqlQuery(
-                "SELECT ac.world, ac.x, ac.y, ac.z, a.type, a.owner, ac.totalValue FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id "
+        List<SqlRow> result = db.sqlQuery(
+                "SELECT ac.world, ac.x, ac.y, ac.z, a.type, a.owner, ac.total_value FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id "
         ).findList();
 
         List<AccountChest> chests = new LinkedList<>();
@@ -207,7 +207,7 @@ public class EBeanDAO implements DAO {
                             signBlock.getZ()
                     );
                 } else {
-                    long theoreticalBalance = c.getLong("cents");
+                    long theoreticalBalance = c.getLong("total_value");
                     GringottsAccount ownerAccount = new GringottsAccount(owner);
                     AccountChest chest = new AccountChest(optionalSign.get(), ownerAccount, theoreticalBalance);
                     chests.add(chest);
@@ -215,7 +215,7 @@ public class EBeanDAO implements DAO {
                     if (theoreticalBalance != chest.balance()) {
                         Gringotts.instance.getLogger().severe("Balance differs for account "
                         + ownerId + "at location " + worldName + " " + x + "," + y + "," + z
-                        + ". Was supposed to be at" + theoreticalBalance + " is now at " + chest.balance());
+                        + ". Was supposed to be at " + theoreticalBalance + ", is at " + chest.balance());
                     }
                 }
             } else {
@@ -229,7 +229,7 @@ public class EBeanDAO implements DAO {
     }
 
     private boolean deleteAccountChest(String world, int x, int y, int z) {
-        SqlUpdate deleteChest = db.createSqlUpdate(
+        SqlUpdate deleteChest = db.sqlUpdate(
                 "delete from gringotts_accountchest where world = :world and x = :x and y = :y and z = :z"
         );
 
@@ -268,7 +268,7 @@ public class EBeanDAO implements DAO {
      */
     @Override
     public boolean renameAccount(String type, String oldName, String newName) {
-        SqlUpdate renameAccount = db.createSqlUpdate(
+        SqlUpdate renameAccount = db.sqlUpdate(
                 "UPDATE gringotts_account SET owner = :newName WHERE owner = :oldName and type = :type"
         );
 
@@ -282,7 +282,7 @@ public class EBeanDAO implements DAO {
     @Override
     public synchronized List<AccountChest> retrieveChests(GringottsAccount account) {
         // TODO ensure world interaction is done in sync task
-        SqlQuery getChests = db.createSqlQuery("SELECT ac.world, ac.x, ac.y, ac.z, ac.totalValue " +
+        SqlQuery getChests = db.sqlQuery("SELECT ac.world, ac.x, ac.y, ac.z, ac.total_value " +
                 "FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id " +
                 "WHERE a.owner = :owner and a.type = :type");
 
@@ -308,14 +308,14 @@ public class EBeanDAO implements DAO {
             );
 
             if (optionalSign.isPresent()) {
-                long theoreticalBalance = result.getLong("cents");
+                long theoreticalBalance = result.getLong("total_value");
                 AccountChest chest = new AccountChest(optionalSign.get(), account, theoreticalBalance);
                 chests.add(chest);
                 //TODO check if chest balance differs from DB entry maybe write to a file or smth
                 if (theoreticalBalance != chest.balance()) {
                     Gringotts.instance.getLogger().severe("Balance differs for account "
                     + account.owner.getId() + "at location " + worldName + " " + x + "," + y + "," + z
-                    + ". Was supposed to be at" + theoreticalBalance + " is now at " + chest.balance());
+                    + ". Was supposed to be at " + theoreticalBalance + ", is at " + chest.balance());
                 }
             } else {
                 // remove accountchest from storage if it is not a valid chest
@@ -333,7 +333,7 @@ public class EBeanDAO implements DAO {
      */
     @Override
     public List<String> getAccounts() {
-        SqlQuery getAccounts = db.createSqlQuery("SELECT type, owner FROM gringotts_account");
+        SqlQuery getAccounts = db.sqlQuery("SELECT type, owner FROM gringotts_account");
 
         List<String> returned = new LinkedList<>();
 
@@ -357,7 +357,7 @@ public class EBeanDAO implements DAO {
      */
     @Override
     public List<String> getAccounts(String type) {
-        SqlQuery getAccounts = db.createSqlQuery("SELECT owner FROM gringotts_account WHERE type = :type");
+        SqlQuery getAccounts = db.sqlQuery("SELECT owner FROM gringotts_account WHERE type = :type");
 
         getAccounts.setParameter("type", type);
 
@@ -376,7 +376,7 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized boolean storeCents(GringottsAccount account, long amount) {
-        SqlUpdate up = db.createSqlUpdate("UPDATE gringotts_account SET cents = :cents " +
+        SqlUpdate up = db.sqlUpdate("UPDATE gringotts_account SET cents = :cents " +
                 "WHERE owner = :owner and type = :type");
 
         up.setParameter("cents", amount);
@@ -388,12 +388,12 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized long retrieveCents(GringottsAccount account) {
-        // can this NPE? (probably doesn't)
+        // can this NPE? (probably doesn't) TODO
         return db.find(EBeanAccount.class)
                 .where()
                 .ieq("type", account.owner.getType())
                 .ieq("owner", account.owner.getId())
-                .findUnique().cents;
+                .findOne().cents;
     }
 
     @Override
@@ -403,7 +403,7 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized boolean deleteAccount(String type, String account) {
-        SqlUpdate renameAccount = db.createSqlUpdate(
+        SqlUpdate renameAccount = db.sqlUpdate(
                 "DELETE FROM gringotts_account WHERE owner = :account and type = :type"
         );
 
@@ -420,7 +420,7 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized boolean deleteAccountChests(String account) {
-        SqlUpdate renameAccount = db.createSqlUpdate(
+        SqlUpdate renameAccount = db.sqlUpdate(
                 "DELETE FROM gringotts_accountchest WHERE account = :account"
         );
 

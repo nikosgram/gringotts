@@ -14,7 +14,7 @@ softdepend: [ PlaceholderAPI ]
 loadbefore: [ Vault ]
 
 libraries:
-  - org.avaje:ebean:2.8.1
+  - io.ebean:ebean-sqlite:15.4.0
 
 commands:
   vault:

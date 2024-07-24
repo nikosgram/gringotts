@@ -1,12 +1,11 @@
 package org.gestern.gringotts.data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
-import org.jetbrains.annotations.NotNull;
+import io.ebean.annotation.NotNull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-@SuppressWarnings("unused")
 @Entity
 @Table(name = "gringotts_pending_operation")
 public class EBeanPendingOperation {

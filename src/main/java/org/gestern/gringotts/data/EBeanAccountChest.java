@@ -1,11 +1,11 @@
 package org.gestern.gringotts.data;
 
-import com.avaje.ebean.validation.NotNull;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import io.ebean.annotation.DbDefault;
+import io.ebean.annotation.NotNull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @SuppressWarnings("unused")
 @Entity
@@ -28,6 +28,7 @@ public class EBeanAccountChest {
     * Virtual balance.
     */
    @NotNull
+   @DbDefault(value = "0")
    long totalValue;
 
     public int getId() {

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <addColumn tableName="gringotts_accountchest">
+            <column name="total_value" type="bigint" defaultValue="0" notnull="true"/>
+        </addColumn>
+        <createTable name="gringotts_pending_operation" pkName="pk_gringotts_pending_operation">
+            <column name="id" type="integer" primaryKey="true"/>
+            <column name="world" type="varchar" notnull="true"/>
+            <column name="x" type="integer" notnull="true"/>
+            <column name="y" type="integer" notnull="true"/>
+            <column name="z" type="integer" notnull="true"/>
+            <column name="amount" type="bigint" notnull="true"/>
+        </createTable>
+    </changeSet>
+</migration>
