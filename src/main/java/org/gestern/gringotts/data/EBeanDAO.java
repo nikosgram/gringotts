@@ -388,12 +388,12 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized long retrieveCents(GringottsAccount account) {
-        // can this NPE? (probably doesn't) TODO
-        return db.find(EBeanAccount.class)
-                .where()
-                .ieq("type", account.owner.getType())
-                .ieq("owner", account.owner.getId())
-                .findOne().cents;
+        Optional<EBeanAccount> result = db.find(EBeanAccount.class)
+            .where()
+            .ieq("type", account.owner.getType())
+            .ieq("owner", account.owner.getId())
+            .findOneOrEmpty();
+        return result.isPresent() ? result.get().cents : 0;
     }
 
     @Override
