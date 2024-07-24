@@ -1,15 +1,18 @@
 package org.gestern.gringotts.currency;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.gestern.gringotts.Configuration;
-
-import java.util.*;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Representation of a currency. This contains information about the currency's denominations and their values.

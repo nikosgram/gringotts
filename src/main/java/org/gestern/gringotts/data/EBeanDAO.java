@@ -63,10 +63,13 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized boolean storeAccountChest(AccountChest chest) {
+        if (!allChests.contains(chest)) allChests.add(chest);
+
         SqlUpdate storeChest = db.sqlUpdate(
-                "insert into gringotts_accountchest (world,x,y,z,account) " +
-                        "values (:world, :x, :y, :z, (select id from gringotts_account where owner=:owner and " +
-                        "type=:type) :total_value)");
+            "insert into gringotts_accountchest (world,x,y,z,account,total_value) " +
+            "values (:world, :x, :y, :z, (select id from gringotts_account where owner=:owner and " +
+            "type=:type), :total_value)"
+        );
 
         Sign mark = chest.sign;
         storeChest.setParameter("world", mark.getWorld().getName());
@@ -75,7 +78,7 @@ public class EBeanDAO implements DAO {
         storeChest.setParameter("z", mark.getZ());
         storeChest.setParameter("owner", chest.account.owner.getId());
         storeChest.setParameter("type", chest.account.owner.getType());
-        storeChest.setParameter("total_value", chest.balance());
+        storeChest.setParameter("total_value", chest.getCachedBalance());
 
         return storeChest.execute() > 0;
     }
@@ -151,11 +154,6 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized boolean hasAccount(AccountHolder accountHolder) {
-        if (!allChests.isEmpty()) {
-            return allChests.stream()
-                .filter(ac -> ac.account.owner == accountHolder)
-                .findAny().isPresent();
-        }
         return db
             .find(EBeanAccount.class).where()
             .ieq("type", accountHolder.getType())
@@ -218,8 +216,11 @@ public class EBeanDAO implements DAO {
                     //TODO check if chest balance differs from DB entry maybe write to a file or smth
                     if (theoreticalBalance != chest.balance()) {
                         Gringotts.instance.getLogger().severe("Balance differs for account "
-                        + ownerId + "at location " + worldName + " " + x + "," + y + "," + z
-                        + ". Was supposed to be at " + theoreticalBalance + ", is at " + chest.balance());
+                            + ownerId + "at location " + worldName + " " + x + "," + y + "," + z
+                            + ". Was supposed to be at " + theoreticalBalance + ", is at " + chest.balance()
+                        );
+                        chest.setCachedBalance(theoreticalBalance);
+                        storeAccountChest(chest);
                     }
                 }
             } else {
@@ -232,7 +233,8 @@ public class EBeanDAO implements DAO {
         return chests;
     }
 
-    private boolean deleteAccountChest(String world, int x, int y, int z) {
+    @Override
+    public boolean deleteAccountChest(String world, int x, int y, int z) {
         SqlUpdate deleteChest = db.sqlUpdate(
                 "delete from gringotts_accountchest where world = :world and x = :x and y = :y and z = :z"
         );
@@ -244,7 +246,7 @@ public class EBeanDAO implements DAO {
 
         allChests.removeIf(chest -> {
             Location loc = chest.sign.getLocation();
-            return loc.getWorld().getName() == world && loc.getX() == x && loc.getZ() == y && loc.getZ() == z;
+            return loc.getWorld().getName() == world && loc.getX() == x && loc.getY() == y && loc.getZ() == z;
         });
         return deleteChest.execute() > 0;
     }
@@ -287,7 +289,7 @@ public class EBeanDAO implements DAO {
     public synchronized List<AccountChest> retrieveChests(GringottsAccount account) {
         // TODO ensure world interaction is done in sync task
         if (!allChests.isEmpty()) {
-            return allChests.stream().filter(ac -> ac.account == account).collect(Collectors.toList());
+            return allChests.stream().filter(ac -> ac.account.owner.equals(account.owner)).collect(Collectors.toList());
         }
         SqlQuery getChests = db.sqlQuery("SELECT ac.world, ac.x, ac.y, ac.z, ac.total_value " +
                 "FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id " +
@@ -321,8 +323,11 @@ public class EBeanDAO implements DAO {
                 //TODO check if chest balance differs from DB entry maybe write to a file or smth
                 if (theoreticalBalance != chest.balance()) {
                     Gringotts.instance.getLogger().severe("Balance differs for account "
-                    + account.owner.getId() + "at location " + worldName + " " + x + "," + y + "," + z
-                    + ". Was supposed to be at " + theoreticalBalance + ", is at " + chest.balance());
+                        + account.owner.getId() + "at location " + worldName + " " + x + "," + y + "," + z
+                        + ". Was supposed to be at " + theoreticalBalance + ", is at " + chest.balance()
+                    );
+                    chest.setCachedBalance(theoreticalBalance);
+                    storeAccountChest(chest);
                 }
             } else {
                 // remove accountchest from storage if it is not a valid chest

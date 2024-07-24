@@ -124,9 +124,8 @@ public class AccountChest {
             destroy();
 
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -209,9 +208,9 @@ public class AccountChest {
             return true;
         }
 
-        String[] lines = sign.getLines();
-        String   line0 = ChatColor.stripColor(lines[0]).trim();
-
+        // Fetch the sign again to avoid strange bug where lines are blank
+        String[] lines = Util.getBlockStateAs(sign.getBlock(), Sign.class).get().getLines();
+        String line0 = ChatColor.stripColor(lines[0]).trim();
 
         Matcher match = VAULT_PATTERN.matcher(line0);
 
@@ -249,10 +248,10 @@ public class AccountChest {
         Location loc = sign.getLocation();
 
         return "[vault] "
-                + loc.getBlockX() + ", "
-                + loc.getBlockY() + ", "
-                + loc.getBlockZ() + ", "
-                + loc.getWorld();
+            + loc.getBlockX() + ", "
+            + loc.getBlockY() + ", "
+            + loc.getBlockZ() + ", "
+            + loc.getWorld().getName();
     }
 
     /**
@@ -387,7 +386,15 @@ public class AccountChest {
      * @return
      */
     public boolean isChestLoaded() {
-        return sign.getChunk().isLoaded();
+        return sign.getWorld().isChunkLoaded(sign.getX()/16, sign.getZ()/16);
+    }
+
+    public void setCachedBalance(long amount) {
+        cachedBalance = amount;
+    }
+
+    public long getCachedBalance() {
+        return cachedBalance;
     }
 
     private void updateTheoreticalBalance(long amount) {

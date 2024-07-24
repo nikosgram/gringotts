@@ -148,6 +148,16 @@ public interface DAO {
     boolean deleteAccountChests(String account);
 
     /**
+     * Delete account chests
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @return boolean indicating success or failure
+     */
+    boolean deleteAccountChest(String world, int x, int y, int z);
+
+    /**
      * Shutdown the database connection.
      */
     void shutdown();

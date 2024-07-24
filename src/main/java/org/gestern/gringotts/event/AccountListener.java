@@ -2,12 +2,17 @@ package org.gestern.gringotts.event;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Tag;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.gestern.gringotts.Configuration;
+import org.gestern.gringotts.Gringotts;
 import org.gestern.gringotts.Util;
+
+import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -63,6 +68,18 @@ public class AccountListener implements Listener {
             final VaultCreationEvent creation = new PlayerVaultCreationEvent(type, event);
 
             Bukkit.getServer().getPluginManager().callEvent(creation);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSignBreak(BlockDestroyEvent event) {
+        if (Tag.SIGNS.isTagged(event.getBlock().getType())) {
+            Gringotts.instance.getDao().deleteAccountChest(
+                event.getBlock().getWorld().getName(),
+                event.getBlock().getX(),
+                event.getBlock().getY(),
+                event.getBlock().getZ()
+            );
         }
     }
 }
