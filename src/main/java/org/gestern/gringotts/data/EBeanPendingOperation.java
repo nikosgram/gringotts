@@ -1,6 +1,8 @@
 package org.gestern.gringotts.data;
 
 
+import org.gestern.gringotts.AccountChest;
+
 import io.ebean.annotation.NotNull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -21,6 +23,14 @@ public class EBeanPendingOperation {
     int z;
     @NotNull
     long amount;
+
+    public EBeanPendingOperation(AccountChest chest, long amount) {
+        world = chest.sign.getWorld().getName();
+        x = chest.sign.getX();
+        y = chest.sign.getY();
+        z = chest.sign.getZ();
+        this.amount = amount;
+    }
 
     public int getId() {
         return id;
@@ -73,5 +83,13 @@ public class EBeanPendingOperation {
     @Override
     public String toString() {
         return "EBeanPendingOperation(" + amount + "," + world + ": " + x + "," + y + "," + z + ")";
+    }
+
+    public int getChunkX() {
+        return x/16;
+    }
+
+    public int getChunkZ() {
+        return z/16;
     }
 }

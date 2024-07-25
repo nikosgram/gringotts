@@ -43,6 +43,8 @@ import org.gestern.gringotts.dependency.placeholdersapi.PlaceholderAPIDependency
 import org.gestern.gringotts.event.AccountListener;
 import org.gestern.gringotts.event.PlayerVaultListener;
 import org.gestern.gringotts.event.VaultCreator;
+import org.gestern.gringotts.pendingoperation.PendingOperationListener;
+import org.gestern.gringotts.pendingoperation.PendingOperationManager;
 
 import io.ebean.Database;
 import io.ebean.DatabaseFactory;
@@ -61,11 +63,12 @@ public class Gringotts extends JavaPlugin {
     private static final String MESSAGES_YML = "messages.yml";
 
     private final AccountHolderFactory accountHolderFactory = new AccountHolderFactory();
-    private final DependencyProvider   dependencies         = new DependencyProviderImpl(this);
-    private final Database             ebean;
-    private       Accounting           accounting;
-    private       DAO                  dao;
-    private       Eco                  eco;
+    private final DependencyProvider dependencies = new DependencyProviderImpl(this);
+    private final Database ebean;
+    private final PendingOperationManager pendingOperationManager = new PendingOperationManager();
+    private Accounting accounting;
+    private DAO dao;
+    private Eco eco;
 
     /**
      * Instantiates a new Gringotts.
@@ -115,6 +118,7 @@ public class Gringotts extends JavaPlugin {
                 @Override
                 public void run() {
                     dao.retrieveChests();
+                    pendingOperationManager.init();
                 }
             }.runTask(instance);
 
@@ -339,6 +343,7 @@ public class Gringotts extends JavaPlugin {
         manager.registerEvents(new AccountListener(), this);
         manager.registerEvents(new PlayerVaultListener(), this);
         manager.registerEvents(new VaultCreator(), this);
+        manager.registerEvents(new PendingOperationListener(), this);
 
         // listeners for other account types are loaded with dependencies
     }
@@ -482,5 +487,9 @@ public class Gringotts extends JavaPlugin {
      */
     public Eco getEco() {
         return eco;
+    }
+
+    public PendingOperationManager getPendingOperationManager() {
+        return pendingOperationManager;
     }
 }

@@ -11,6 +11,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.gestern.gringotts.data.EBeanPendingOperation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -404,6 +405,7 @@ public class AccountChest {
     }
 
     private void emitPendingOperation(long amount) {
-        // TODO emit PendingOperation and update db
+        Gringotts.instance.getPendingOperationManager()
+            .registerNewOperation(new EBeanPendingOperation(this, amount));
     }
 }
