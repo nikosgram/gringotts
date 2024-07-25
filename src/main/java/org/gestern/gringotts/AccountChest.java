@@ -130,11 +130,15 @@ public class AccountChest {
 
     /**
      * Return balance of this chest.
-     *
-     * @return balance of this chest
+     * Equivalent to AccountChest#balance(false)
+     * @return balance of this chest or the cached balance if the chest is unloaded
      */
     public long balance() {
-        if (!isChestLoaded()) return cachedBalance;
+        return balance(false);
+    }
+
+    public long balance(boolean forceUpdate) {
+        if (!forceUpdate && !isChestLoaded()) return cachedBalance;
 
         if (updateInvalid()) {
             return 0;
@@ -157,9 +161,9 @@ public class AccountChest {
      * @return amount actually added
      */
     public long add(long value) {
+        setCachedBalance(cachedBalance + value);
         if (!isChestLoaded()) {
-            cachedBalance += value;
-            updateTheoreticalBalance(value);
+            emitPendingOperation(value);
             return value;
         }
         if (updateInvalid()) {
@@ -180,10 +184,11 @@ public class AccountChest {
      * @return amount actually removed from this chest
      */
     public long remove(long value) {
+        long subtracted = Math.min(value, cachedBalance);
+        setCachedBalance(cachedBalance - subtracted);
         if (!isChestLoaded()) {
-            cachedBalance -= Math.min(value, cachedBalance);
-            updateTheoreticalBalance(-value);
-            return Math.min(value, cachedBalance);
+            emitPendingOperation(-subtracted);
+            return subtracted;
         }
         if (updateInvalid()) {
             return 0;
@@ -391,13 +396,14 @@ public class AccountChest {
 
     public void setCachedBalance(long amount) {
         cachedBalance = amount;
+        Gringotts.instance.getDao().updateChestBalance(this, cachedBalance);
     }
 
     public long getCachedBalance() {
         return cachedBalance;
     }
 
-    private void updateTheoreticalBalance(long amount) {
+    private void emitPendingOperation(long amount) {
         // TODO emit PendingOperation and update db
     }
 }

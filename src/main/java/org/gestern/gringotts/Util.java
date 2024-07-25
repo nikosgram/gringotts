@@ -12,6 +12,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -199,6 +200,27 @@ public final class Util {
         switch (material) {
             case CHEST:
             case TRAPPED_CHEST:
+            case DISPENSER:
+            case FURNACE:
+            case HOPPER:
+            case DROPPER:
+            case BARREL:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Return whether the given inventory type for Gringotts
+     *
+     * @param inventory inventory to check
+     * @return whether the given inventory type is valid for Gringotts
+     */
+    public static boolean isValidInventory(InventoryType inventory) {
+
+        switch (inventory) {
+            case CHEST:
             case DISPENSER:
             case FURNACE:
             case HOPPER:

@@ -63,7 +63,7 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized boolean storeAccountChest(AccountChest chest) {
-        if (!allChests.contains(chest)) allChests.add(chest);
+        allChests.add(chest);
 
         SqlUpdate storeChest = db.sqlUpdate(
             "insert into gringotts_accountchest (world,x,y,z,account,total_value) " +
@@ -213,14 +213,16 @@ public class EBeanDAO implements DAO {
                     GringottsAccount ownerAccount = new GringottsAccount(owner);
                     AccountChest chest = new AccountChest(optionalSign.get(), ownerAccount, theoreticalBalance);
                     chests.add(chest);
+
                     //TODO check if chest balance differs from DB entry maybe write to a file or smth
-                    if (theoreticalBalance != chest.balance()) {
+                    long realBalance = chest.balance(true);
+                    if (theoreticalBalance != realBalance) {
                         Gringotts.instance.getLogger().severe("Balance differs for account "
                             + ownerId + "at location " + worldName + " " + x + "," + y + "," + z
-                            + ". Was supposed to be at " + theoreticalBalance + ", is at " + chest.balance()
+                            + ". Was supposed to be at " + theoreticalBalance + ", is at " + realBalance
                         );
-                        chest.setCachedBalance(theoreticalBalance);
-                        storeAccountChest(chest);
+                        chest.setCachedBalance(realBalance);
+                        updateChestBalance(chest, realBalance);
                     }
                 }
             } else {
@@ -321,13 +323,14 @@ public class EBeanDAO implements DAO {
                 AccountChest chest = new AccountChest(optionalSign.get(), account, theoreticalBalance);
                 chests.add(chest);
                 //TODO check if chest balance differs from DB entry maybe write to a file or smth
-                if (theoreticalBalance != chest.balance()) {
+                long realBalance = chest.balance(true);
+                if (theoreticalBalance != realBalance) {
                     Gringotts.instance.getLogger().severe("Balance differs for account "
                         + account.owner.getId() + "at location " + worldName + " " + x + "," + y + "," + z
-                        + ". Was supposed to be at " + theoreticalBalance + ", is at " + chest.balance()
+                        + ". Was supposed to be at " + theoreticalBalance + ", is at " + realBalance
                     );
-                    chest.setCachedBalance(theoreticalBalance);
-                    storeAccountChest(chest);
+                    chest.setCachedBalance(realBalance);
+                    updateChestBalance(chest, realBalance);
                 }
             } else {
                 // remove accountchest from storage if it is not a valid chest
@@ -445,5 +448,20 @@ public class EBeanDAO implements DAO {
     @Override
     public synchronized void shutdown() {
         // probably handled by Bukkit?
+    }
+
+    @Override
+    public boolean updateChestBalance(AccountChest chest, long balance) {
+        SqlUpdate updateChest = db.sqlUpdate(
+            "UPDATE gringotts_accountchest SET total_value = :total_value "
+            + "WHERE world = :world and x = :x and y = :y and z = :z"
+        );
+
+        updateChest.setParameter("world", chest.sign.getWorld().getName());
+        updateChest.setParameter("x", chest.sign.getX());
+        updateChest.setParameter("y", chest.sign.getY());
+        updateChest.setParameter("z", chest.sign.getZ());
+        updateChest.setParameter("total_value", balance);
+        return updateChest.execute() > 0;
     }
 }
