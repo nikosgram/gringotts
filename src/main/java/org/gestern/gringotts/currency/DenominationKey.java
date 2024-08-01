@@ -39,7 +39,7 @@ public class DenominationKey {
             this.typeCustomModelData = 0;
             type.getItemMeta().setCustomModelData(typeCustomModelData);
         }
-        this.type.setAmount(0);
+        this.type.setAmount(1);
     }
 
 
