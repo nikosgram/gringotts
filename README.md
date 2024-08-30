@@ -6,6 +6,44 @@ currency value and money transactions are based on actual items in Minecraft, pe
 a greater level of immersion, a generally more Minecraft-like feeling, and in the case of a PvP environment, making the
 currency itself vulnerable to raiding.
 
+
+### ⚠ Breaking Changes in Version 3.0.0
+
+This version changed the way data are stored, so if you come from an older version of Gringotts, you need to manually update your database.
+
+- Shutdown your server
+- In your plugins folder, open the folder named `Gringotts`
+- Make a copy of the file `Gringotts.db` in case something goes wrong during the update.
+- Install sqlite3 command-line program, on linux you can do so by entering the following in the terminal `sudo apt install sqlite3`
+(for windows refer to [this link](https://www.sqlite.org/cli.html))
+- Open your terminal in Gringotts' directory and enter this command `sqlite3 Gringotts.db`
+- In the shell enter the following instruction
+```
+CREATE TABLE db_migration (
+  id                           integer not null,
+  mchecksum                    integer not null,
+  mtype                        varchar(1) not null,
+  mversion                     varchar(150) not null,
+  mcomment                     varchar(150) not null,
+  mstatus                      varchar(10) not null,
+  run_on                       timestamp not null,
+  run_by                       varchar(30) not null,
+  run_time                     integer not null,
+  constraint pk_db_migration primary key (id)
+);
+```
+Execute and then enter
+`INSERT INTO db_migration VALUES(0,0,'I','0','<init>','SUCCESS',1721777343415,'foo',0);`
+and
+`INSERT INTO db_migration VALUES(1,-1450547331,'V','1.0','initial','SUCCESS',1721777343415,'foo',1);`
+
+- If everything went smoothly you should be done, exit sqlite by tying `.exit`, replace gringotts.jar by the new version and start your server.
+
+> You may get the error `Error: attempt to write a readonly database`, that means that your user doesn't have write permission for the file Gringotts.db.
+
+> On the first launch you will get lot of `Balance differs for account` errors, they can be ignored. If you get one after that, please open an issue as it may indicate a money duplication glitch.
+
+
 ### Get Gringotts
 
 - [from Spigot](https://www.spigotmc.org/resources/gringotts.42071/)
