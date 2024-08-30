@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>minecraftwars</groupId>
     <artifactId>gringotts</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.1-SNAPSHOT</version>
 
     <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
