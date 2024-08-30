@@ -45,7 +45,7 @@ public class VaultCreator implements Listener {
         }
 
         // create account chest
-        AccountChest accountChest = new AccountChest(optionalSign.get(), account);
+        AccountChest accountChest = new AccountChest(optionalSign.get(), account, 0);
 
         // check for existence / add to tracking
         if (accounting.addChest(accountChest)) {

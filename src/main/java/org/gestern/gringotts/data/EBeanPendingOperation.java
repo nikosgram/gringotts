@@ -1,17 +1,16 @@
 package org.gestern.gringotts.data;
 
-import io.ebean.annotation.DbDefault;
+
+import org.gestern.gringotts.AccountChest;
+
 import io.ebean.annotation.NotNull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
-@SuppressWarnings("unused")
 @Entity
-@Table(name = "gringotts_accountchest")
-@UniqueConstraint(columnNames = {"world", "x", "y", "z"})
-public class EBeanAccountChest {
+@Table(name = "gringotts_pending_operation")
+public class EBeanPendingOperation {
     @Id
     int id;
     @NotNull
@@ -23,13 +22,15 @@ public class EBeanAccountChest {
     @NotNull
     int z;
     @NotNull
-    int account;
-    /**
-    * Virtual balance.
-    */
-   @NotNull
-   @DbDefault(value = "0")
-   long totalValue;
+    long amount;
+
+    public EBeanPendingOperation(AccountChest chest, long amount) {
+        world = chest.sign.getWorld().getName();
+        x = chest.sign.getX();
+        y = chest.sign.getY();
+        z = chest.sign.getZ();
+        this.amount = amount;
+    }
 
     public int getId() {
         return id;
@@ -71,25 +72,24 @@ public class EBeanAccountChest {
         this.z = z;
     }
 
-    public int getAccount() {
-        return account;
+    public long getAmount() {
+        return amount;
     }
 
-    public void setAccount(int account) {
-        this.account = account;
-    }
-
-    public long getTotalValue() {
-        return this.totalValue;
-    }
-
-    public void setTotalValue(long totalValue) {
-        this.totalValue = totalValue;
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 
     @Override
     public String toString() {
-        return "EBeanAccountChest(" + account + "," + totalValue + "," + world + ": " + x + "," + y + "," + z + ")";
+        return "EBeanPendingOperation(" + amount + "," + world + ": " + x + "," + y + "," + z + ")";
     }
 
+    public int getChunkX() {
+        return x/16;
+    }
+
+    public int getChunkZ() {
+        return z/16;
+    }
 }

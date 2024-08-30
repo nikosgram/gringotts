@@ -1,14 +1,15 @@
 package org.gestern.gringotts;
 
-import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.EbeanServerFactory;
-import com.avaje.ebean.config.DataSourceConfig;
-import com.avaje.ebean.config.ServerConfig;
-import com.avaje.ebean.config.dbplatform.SQLitePlatform;
-import com.avaje.ebeaninternal.api.SpiEbeanServer;
-import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
-import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
-import net.milkbowl.vault.economy.Economy;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.DrilldownPie;
@@ -21,6 +22,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.gestern.gringotts.accountholder.AccountHolderFactory;
 import org.gestern.gringotts.accountholder.AccountHolderProvider;
 import org.gestern.gringotts.api.Eco;
@@ -41,15 +43,15 @@ import org.gestern.gringotts.dependency.placeholdersapi.PlaceholderAPIDependency
 import org.gestern.gringotts.event.AccountListener;
 import org.gestern.gringotts.event.PlayerVaultListener;
 import org.gestern.gringotts.event.VaultCreator;
+import org.gestern.gringotts.pendingoperation.PendingOperationListener;
+import org.gestern.gringotts.pendingoperation.PendingOperationManager;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import io.ebean.Database;
+import io.ebean.DatabaseFactory;
+import io.ebean.Transaction;
+import io.ebean.config.DatabaseConfig;
+import io.ebean.datasource.DataSourceConfig;
+import net.milkbowl.vault.economy.Economy;
 
 /**
  * The type Gringotts.
@@ -61,39 +63,41 @@ public class Gringotts extends JavaPlugin {
     private static final String MESSAGES_YML = "messages.yml";
 
     private final AccountHolderFactory accountHolderFactory = new AccountHolderFactory();
-    private final DependencyProvider   dependencies         = new DependencyProviderImpl(this);
-    private final EbeanServer          ebean;
-    private       Accounting           accounting;
-    private       DAO                  dao;
-    private       Eco                  eco;
+    private final DependencyProvider dependencies = new DependencyProviderImpl(this);
+    private final Database ebean;
+    private final PendingOperationManager pendingOperationManager = new PendingOperationManager();
+    private Accounting accounting;
+    private DAO dao;
+    private Eco eco;
 
     /**
      * Instantiates a new Gringotts.
      */
     public Gringotts() {
-        // Set instance when class is being initialized
         instance = this;
-
-        ServerConfig dbConfig = new ServerConfig();
-
-        dbConfig.setDefaultServer(false);
-        dbConfig.setRegister(false);
-        dbConfig.setClasses(getDatabaseClasses());
-        dbConfig.setName(getDescription().getName());
-
-        configureDbConfig(dbConfig);
-
-        DataSourceConfig dsConfig = dbConfig.getDataSourceConfig();
-
-        dsConfig.setUrl(replaceDatabaseString(dsConfig.getUrl()));
-        //noinspection ResultOfMethodCallIgnored
         getDataFolder().mkdirs();
 
-        ClassLoader previous = Thread.currentThread().getContextClassLoader();
+        DatabaseConfig cfg = new DatabaseConfig();
+        Properties properties = new Properties();
 
-        Thread.currentThread().setContextClassLoader(getClassLoader());
-        ebean = EbeanServerFactory.create(dbConfig);
-        Thread.currentThread().setContextClassLoader(previous);
+        DataSourceConfig dataSourceConfig = new DataSourceConfig();
+        dataSourceConfig.setUsername("bukkit");
+        dataSourceConfig.setPassword("walrus");
+        dataSourceConfig.setUrl(replaceDatabaseString("jdbc:sqlite:{DIR}{NAME}.db"));
+        dataSourceConfig.setDriver("org.sqlite.JDBC");
+        dataSourceConfig.setIsolationLevel(Transaction.SERIALIZABLE);
+
+        cfg.setDataSourceConfig(dataSourceConfig);
+        cfg.setDdlGenerate(true);
+        cfg.setDdlRun(true);
+        cfg.setRunMigration(true);
+        cfg.setClasses(EBeanDAO.getDatabaseClasses());
+
+        cfg.loadFromProperties(properties);
+        ClassLoader previousCL = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+        ebean = DatabaseFactory.create(cfg);
+        Thread.currentThread().setContextClassLoader(previousCL);
     }
 
     public String getVersion() {
@@ -108,6 +112,15 @@ public class Gringotts extends JavaPlugin {
         try {
             // just call DAO once to ensure it's loaded before startup is complete
             dao = getDAO();
+
+            new BukkitRunnable() {
+                // Run once worlds are loaded
+                @Override
+                public void run() {
+                    dao.retrieveChests();
+                    pendingOperationManager.init();
+                }
+            }.runTask(instance);
 
             // load and init configuration
             saveDefaultConfig(); // saves default configuration if no config.yml exists yet
@@ -330,6 +343,7 @@ public class Gringotts extends JavaPlugin {
         manager.registerEvents(new AccountListener(), this);
         manager.registerEvents(new PlayerVaultListener(), this);
         manager.registerEvents(new VaultCreator(), this);
+        manager.registerEvents(new PendingOperationListener(), this);
 
         // listeners for other account types are loaded with dependencies
     }
@@ -398,8 +412,6 @@ public class Gringotts extends JavaPlugin {
     }
 
     private DAO getDAO() {
-        setupEBean();
-
         return EBeanDAO.getDao();
     }
 
@@ -413,25 +425,7 @@ public class Gringotts extends JavaPlugin {
     }
 
     /**
-     * Some awkward ritual that Bukkit requires to initialize all the DB classes.
-     * Does nothing if they have already been set up.
-     */
-    private void setupEBean() {
-        try {
-            EbeanServer db = getDatabase();
-
-            for (Class<?> c : getDatabaseClasses()) {
-                db.find(c).findRowCount();
-            }
-        } catch (Exception ignored) {
-            getLogger().info("Initializing database tables.");
-
-            installDDL();
-        }
-    }
-
-    /**
-     * Gets the {@link EbeanServer} tied to this plugin.
+     * Gets the {@link Database} tied to this plugin.
      * <p>
      * <i>For more information on the use of <a href="http://www.avaje.org/">
      * Avaje Ebeans ORM</a>, see <a href="http://www.avaje.org/ebean/documentation.html">
@@ -444,18 +438,8 @@ public class Gringotts extends JavaPlugin {
      *
      * @return ebean server instance or null if not enabled all EBean related methods has been removed with Minecraft 1.12 - see <a href="https://www.spigotmc.org/threads/194144/">...</a>
      */
-    public EbeanServer getDatabase() {
+    public Database getDatabase() {
         return ebean;
-    }
-
-    /**
-     * Install ddl.
-     */
-    protected void installDDL() {
-        SpiEbeanServer server = (SpiEbeanServer) getDatabase();
-        DdlGenerator   gen    = server.getDdlGenerator();
-
-        gen.runScript(false, gen.generateCreateDdl());
     }
 
     private String replaceDatabaseString(String input) {
@@ -464,30 +448,9 @@ public class Gringotts extends JavaPlugin {
                 getDataFolder().getPath().replaceAll("\\\\", "/") + "/");
         input = input.replaceAll(
                 "\\{NAME}",
-                getDescription().getName().replaceAll("[^\\w_-]", ""));
+                getName().replaceAll("[^\\w_-]", ""));
 
         return input;
-    }
-
-    /**
-     * Configure db config.
-     *
-     * @param config the config
-     */
-    public void configureDbConfig(ServerConfig config) {
-        DataSourceConfig ds = new DataSourceConfig();
-        ds.setDriver("org.sqlite.JDBC");
-        ds.setUrl("jdbc:sqlite:{DIR}{NAME}.db");
-        ds.setUsername("bukkit");
-        ds.setPassword("walrus");
-        ds.setIsolationLevel(TransactionIsolation.getLevel("SERIALIZABLE"));
-
-        if (ds.getDriver().contains("sqlite")) {
-            config.setDatabasePlatform(new SQLitePlatform());
-            config.getDatabasePlatform().getDbDdlSyntax().setIdentity("");
-        }
-
-        config.setDataSourceConfig(ds);
     }
 
     /**
@@ -524,5 +487,9 @@ public class Gringotts extends JavaPlugin {
      */
     public Eco getEco() {
         return eco;
+    }
+
+    public PendingOperationManager getPendingOperationManager() {
+        return pendingOperationManager;
     }
 }

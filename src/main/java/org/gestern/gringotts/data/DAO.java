@@ -13,13 +13,21 @@ import java.util.Collection;
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public interface DAO {
     /**
-     * Save an account chest to database.
+     * Store a new account chest to database.
      *
-     * @param chest chest to save
+     * @param chest chest to store
      * @return true if chest was stored, false otherwise
      * @throws GringottsStorageException when storage failed
      */
     boolean storeAccountChest(AccountChest chest);
+
+    /**
+     * Update a chest's balance oin the database
+     * @param chest chest to update
+     * @param balance chest's new balance
+     * @return true if update was successful, false otherwise
+     */
+    boolean updateChestBalance(AccountChest chest, long balance);
 
     /**
      * Deletes an account chest from the datastore.
@@ -146,6 +154,16 @@ public interface DAO {
      * @return the boolean
      */
     boolean deleteAccountChests(String account);
+
+    /**
+     * Delete account chests
+     * @param world
+     * @param x
+     * @param y
+     * @param z
+     * @return boolean indicating success or failure
+     */
+    boolean deleteAccountChest(String world, int x, int y, int z);
 
     /**
      * Shutdown the database connection.

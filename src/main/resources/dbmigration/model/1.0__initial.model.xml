@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <createTable name="gringotts_account" pkName="pk_gringotts_account">
+            <column name="id" type="integer" primaryKey="true"/>
+            <column name="type" type="varchar" notnull="true"/>
+            <column name="owner" type="varchar" notnull="true"/>
+            <column name="cents" type="bigint" notnull="true"/>
+            <uniqueConstraint name="uq_gringotts_account_type_owner" columnNames="type,owner" oneToOne="false" nullableColumns=""/>
+        </createTable>
+        <createTable name="gringotts_accountchest" pkName="pk_gringotts_accountchest">
+            <column name="id" type="integer" primaryKey="true"/>
+            <column name="world" type="varchar" notnull="true"/>
+            <column name="x" type="integer" notnull="true"/>
+            <column name="y" type="integer" notnull="true"/>
+            <column name="z" type="integer" notnull="true"/>
+            <column name="account" type="integer" notnull="true"/>
+            <uniqueConstraint name="uq_gringotts_accountchest_world_x_y_z" columnNames="world,x,y,z" oneToOne="false" nullableColumns=""/>
+        </createTable>
+    </changeSet>
+</migration>

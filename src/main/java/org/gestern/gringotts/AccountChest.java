@@ -1,6 +1,7 @@
 package org.gestern.gringotts;
 
 import io.papermc.lib.PaperLib;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -10,6 +11,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.gestern.gringotts.data.EBeanPendingOperation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,13 +36,15 @@ public class AccountChest {
      */
     public final GringottsAccount account;
 
+    private long cachedBalance;
+
     /**
      * Create Account chest based on a sign marking its position and belonging to an account.
      *
      * @param sign    the marker sign
      * @param account the account
      */
-    public AccountChest(Sign sign, GringottsAccount account) {
+    public AccountChest(Sign sign, GringottsAccount account, long cachedBalance) {
         if (sign == null || account == null) {
             throw new IllegalArgumentException(String.format(
                     "null arguments to AccountChest() not allowed. args were: sign: %s, account: %s",
@@ -52,6 +56,7 @@ public class AccountChest {
         this.sign    = sign;
         this.account = account;
         this.id      = String.format("%s_%d_%d_%d", sign.getWorld().getUID(), sign.getX(), sign.getY(), sign.getZ());
+        this.cachedBalance = cachedBalance;
     }
 
     /**
@@ -120,17 +125,22 @@ public class AccountChest {
             destroy();
 
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
      * Return balance of this chest.
-     *
-     * @return balance of this chest
+     * Equivalent to AccountChest#balance(false)
+     * @return balance of this chest or the cached balance if the chest is unloaded
      */
     public long balance() {
+        return balance(false);
+    }
+
+    public long balance(boolean forceUpdate) {
+        if (!forceUpdate && !isChestLoaded()) return cachedBalance;
+
         if (updateInvalid()) {
             return 0;
         }
@@ -152,6 +162,11 @@ public class AccountChest {
      * @return amount actually added
      */
     public long add(long value) {
+        setCachedBalance(cachedBalance + value);
+        if (!isChestLoaded()) {
+            emitPendingOperation(value);
+            return value;
+        }
         if (updateInvalid()) {
             return 0;
         }
@@ -170,6 +185,12 @@ public class AccountChest {
      * @return amount actually removed from this chest
      */
     public long remove(long value) {
+        long subtracted = Math.min(value, cachedBalance);
+        setCachedBalance(cachedBalance - subtracted);
+        if (!isChestLoaded()) {
+            emitPendingOperation(-subtracted);
+            return subtracted;
+        }
         if (updateInvalid()) {
             return 0;
         }
@@ -193,9 +214,9 @@ public class AccountChest {
             return true;
         }
 
-        String[] lines = sign.getLines();
-        String   line0 = ChatColor.stripColor(lines[0]).trim();
-
+        // Fetch the sign again to avoid strange bug where lines are blank
+        String[] lines = Util.getBlockStateAs(sign.getBlock(), Sign.class).get().getLines();
+        String line0 = ChatColor.stripColor(lines[0]).trim();
 
         Matcher match = VAULT_PATTERN.matcher(line0);
 
@@ -233,10 +254,10 @@ public class AccountChest {
         Location loc = sign.getLocation();
 
         return "[vault] "
-                + loc.getBlockX() + ", "
-                + loc.getBlockY() + ", "
-                + loc.getBlockZ() + ", "
-                + loc.getWorld();
+            + loc.getBlockX() + ", "
+            + loc.getBlockY() + ", "
+            + loc.getBlockZ() + ", "
+            + loc.getWorld().getName();
     }
 
     /**
@@ -363,5 +384,28 @@ public class AccountChest {
         this.sign.setLine(2, this.account.owner.getName());
 
         this.sign.update();
+    }
+
+    /**
+     * Returns true if the chunk containing this account's chest is already loaded in memory
+     * (in fact this checks if vault's sign is loaded but we don't care)
+     * @return
+     */
+    public boolean isChestLoaded() {
+        return sign.getWorld().isChunkLoaded(sign.getX()/16, sign.getZ()/16);
+    }
+
+    public void setCachedBalance(long amount) {
+        cachedBalance = amount;
+        Gringotts.instance.getDao().updateChestBalance(this, cachedBalance);
+    }
+
+    public long getCachedBalance() {
+        return cachedBalance;
+    }
+
+    private void emitPendingOperation(long amount) {
+        Gringotts.instance.getPendingOperationManager()
+            .registerNewOperation(new EBeanPendingOperation(this, amount));
     }
 }
