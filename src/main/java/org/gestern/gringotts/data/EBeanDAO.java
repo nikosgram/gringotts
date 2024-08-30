@@ -161,6 +161,30 @@ public class EBeanDAO implements DAO {
             .findOneOrEmpty().isPresent();
     }
 
+    /**
+     * Checks the balance of a given account chest and logs any discrepancies between the theoretical balance
+     * and the real balance. If a discrepancy is found, the real balance is updated and logged.
+     *
+     * @param chest              the account chest to check
+     * @param theoreticalBalance the expected balance of the account chest
+     * @param ownerId            the owner ID of the account chest
+     * @param worldName          the name of the world where the chest is located
+     * @param x                  the x-coordinate of the chest's location
+     * @param y                  the y-coordinate of the chest's location
+     * @param z                  the z-coordinate of the chest's location
+     */
+    private void checkAndLogBalance(AccountChest chest, long theoreticalBalance, String ownerId, String worldName, int x, int y, int z) {
+        long realBalance = chest.balance(true);
+        if (theoreticalBalance != realBalance) {
+            Gringotts.instance.getLogger().severe("Balance differs for account "
+                    + ownerId + " at location " + worldName + " " + x + "," + y + "," + z
+                    + ". Was supposed to be at " + theoreticalBalance + ", is at " + realBalance
+            );
+            chest.setCachedBalance(realBalance);
+            updateChestBalance(chest, realBalance);
+        }
+    }
+
     @Override
     public synchronized Collection<AccountChest> retrieveChests() {
         if (!allChests.isEmpty()) return allChests;
@@ -214,16 +238,7 @@ public class EBeanDAO implements DAO {
                     AccountChest chest = new AccountChest(optionalSign.get(), ownerAccount, theoreticalBalance);
                     chests.add(chest);
 
-                    //TODO check if chest balance differs from DB entry maybe write to a file or smth
-                    long realBalance = chest.balance(true);
-                    if (theoreticalBalance != realBalance) {
-                        Gringotts.instance.getLogger().severe("Balance differs for account "
-                            + ownerId + "at location " + worldName + " " + x + "," + y + "," + z
-                            + ". Was supposed to be at " + theoreticalBalance + ", is at " + realBalance
-                        );
-                        chest.setCachedBalance(realBalance);
-                        updateChestBalance(chest, realBalance);
-                    }
+                    checkAndLogBalance(chest, theoreticalBalance, ownerId, worldName, x, y, z);
                 }
             } else {
                 // remove accountchest from storage if it is not a valid chest
