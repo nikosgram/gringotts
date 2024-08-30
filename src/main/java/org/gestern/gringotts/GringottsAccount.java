@@ -324,11 +324,8 @@ public class GringottsAccount {
 
     public long addToShulkerBox(long remaining, Inventory inventory) {
         for (ItemStack itemStack : inventory.getContents()) {
-            if (itemStack != null && Tag.SHULKER_BOXES.isTagged(itemStack.getType()) && itemStack.getItemMeta() instanceof BlockStateMeta) {
-                BlockStateMeta blockState = (BlockStateMeta) itemStack.getItemMeta();
-                if (blockState.getBlockState() instanceof ShulkerBox) {
-                    ShulkerBox shulkerBox = (ShulkerBox) blockState.getBlockState();
-
+            if (itemStack != null && Tag.SHULKER_BOXES.isTagged(itemStack.getType()) && itemStack.getItemMeta() instanceof BlockStateMeta blockState) {
+                if (blockState.getBlockState() instanceof ShulkerBox shulkerBox) {
                     remaining -= new AccountInventory(shulkerBox.getInventory()).add(remaining);
 
                     shulkerBox.update();
@@ -347,11 +344,8 @@ public class GringottsAccount {
 
     public long removeFromShulkerBox(long remaining, Inventory inventory) {
         for (ItemStack itemStack : inventory.getContents()) {
-            if (itemStack != null && Tag.SHULKER_BOXES.isTagged(itemStack.getType()) && itemStack.getItemMeta() instanceof BlockStateMeta) {
-                BlockStateMeta blockState = (BlockStateMeta) itemStack.getItemMeta();
-                if (blockState.getBlockState() instanceof ShulkerBox) {
-                    ShulkerBox shulkerBox = (ShulkerBox) blockState.getBlockState();
-
+            if (itemStack != null && Tag.SHULKER_BOXES.isTagged(itemStack.getType()) && itemStack.getItemMeta() instanceof BlockStateMeta blockState) {
+                if (blockState.getBlockState() instanceof ShulkerBox shulkerBox) {
                     remaining -= new AccountInventory(shulkerBox.getInventory()).remove(remaining);
 
                     shulkerBox.update();
