@@ -103,7 +103,7 @@ public enum Configuration {
 
         // TODO check for Vault dependency
         if (material != null) {
-            return new ItemStack(material, 0);
+            return new ItemStack(material);
         }
 
         throw new GringottsConfigurationException("Unable to identify denomination item by name or id: " + name);
