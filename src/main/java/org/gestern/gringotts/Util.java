@@ -168,11 +168,10 @@ public final class Util {
         Block signBlock = sign.getBlock();
         BlockData blockData = signBlock.getBlockData();
 
-        if (!(blockData instanceof WallSign)) {
+        if (!(blockData instanceof WallSign signData)) {
             return null;
         }
 
-        WallSign signData = (WallSign) blockData;
         BlockFace attached = signData.getFacing().getOppositeFace();
 
         // allow either the block sign is attached to or the block below the sign as
@@ -197,18 +196,10 @@ public final class Util {
             return false;
         }
 
-        switch (material) {
-            case CHEST:
-            case TRAPPED_CHEST:
-            case DISPENSER:
-            case FURNACE:
-            case HOPPER:
-            case DROPPER:
-            case BARREL:
-                return true;
-            default:
-                return false;
-        }
+        return switch (material) {
+            case CHEST, TRAPPED_CHEST, DISPENSER, FURNACE, HOPPER, DROPPER, BARREL -> true;
+            default -> false;
+        };
     }
 
     /**
@@ -218,18 +209,10 @@ public final class Util {
      * @return whether the given inventory type is valid for Gringotts
      */
     public static boolean isValidInventory(InventoryType inventory) {
-
-        switch (inventory) {
-            case CHEST:
-            case DISPENSER:
-            case FURNACE:
-            case HOPPER:
-            case DROPPER:
-            case BARREL:
-                return true;
-            default:
-                return false;
-        }
+        return switch (inventory) {
+            case CHEST, DISPENSER, FURNACE, HOPPER, DROPPER, BARREL -> true;
+            default -> false;
+        };
     }
 
     /**
