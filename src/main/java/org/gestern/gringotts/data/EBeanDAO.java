@@ -337,16 +337,8 @@ public class EBeanDAO implements DAO {
                 long theoreticalBalance = result.getLong("total_value");
                 AccountChest chest = new AccountChest(optionalSign.get(), account, theoreticalBalance);
                 chests.add(chest);
-                //TODO check if chest balance differs from DB entry maybe write to a file or smth
-                long realBalance = chest.balance(true);
-                if (theoreticalBalance != realBalance) {
-                    Gringotts.instance.getLogger().severe("Balance differs for account "
-                        + account.owner.getId() + "at location " + worldName + " " + x + "," + y + "," + z
-                        + ". Was supposed to be at " + theoreticalBalance + ", is at " + realBalance
-                    );
-                    chest.setCachedBalance(realBalance);
-                    updateChestBalance(chest, realBalance);
-                }
+
+                checkAndLogBalance(chest, theoreticalBalance, account.owner.getId(), worldName, x, y, z);
             } else {
                 // remove accountchest from storage if it is not a valid chest
                 deleteAccountChest(worldName, x, y, z);
