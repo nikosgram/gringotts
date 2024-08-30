@@ -1,5 +1,6 @@
-Configuration, Permissions, Localization
+Configuration, Localization, Permissions
 ========================================
+
 
 Configuration
 -------------
@@ -7,8 +8,10 @@ As usual with Bukkit plugins, the configuration is in the config.yml in the plug
 
 Please refer to the [default config.yml](https://github.com/MinecraftWars/Gringotts/blob/master/config.yml) for a complete example.
 
+
 ### Language ###
 The `language` option allows you to set one of Gringotts' supported language for interaction messages with players. Currently supported options are `custom` (default/english) and `de` (German). See below on how to modify custom messages to your preferences.
+
 
 ### Currency ###
 Per default Gringotts uses emeralds as currency, but this can be changed to any other type of item.
@@ -28,6 +31,7 @@ Example configuration section:
           value: 9
 
 This is the default configuration which uses emeralds as currency, with emeralds having value 1, and emerald blocks value 9.
+
 
 #### Individual settings
 
@@ -149,6 +153,7 @@ Allow players to create vaults for other players.
 
 Allow players to create vaults for their own account.
 
+
 ### Vault usage
 
     gringotts.usevault
@@ -167,37 +172,40 @@ Use player inventory as vault when player is online.
     gringotts.usevault.enderchest
       default: true
 
-### User commands
+Use player's enderchest as vault when player is online.
 
-Use Gringotts commands.
+
+### User commands
 
     gringotts.command
       default: true
 
+Use Gringotts commands.
+
 ---
- 
-Allow transfer command (pay)
 
     gringotts.transfer:
       default: true
 
----
+Allow players to transfer money to other accounts via `/money pay`
+(was: Allow transfer command (pay))
 
-Allow withdrawal of money from chest storage to inventory via `/money withdraw`.
+---
     
     gringotts.command.withdraw:
       default: true
+
+Allow withdrawal of money from chest storage to inventory via `/money withdraw`.
     
 ---
-
-Allow deposit of money to chest storage from inventory via `/money deposit`.
     
     gringotts.command.deposit:
       default: true
 
-### Admin permissions
+Allow deposit of money to chest storage from inventory via `/money deposit`.
 
-Allow players to transfer money to other accounts via `/money pay`
+
+### Admin permissions
 
     gringotts.admin:
       default: op
