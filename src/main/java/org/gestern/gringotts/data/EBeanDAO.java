@@ -180,6 +180,7 @@ public class EBeanDAO implements DAO {
                     + ownerId + " at location " + worldName + " " + x + "," + y + "," + z
                     + ". Was supposed to be at " + theoreticalBalance + ", is at " + realBalance
             );
+
             chest.setCachedBalance(realBalance);
             updateChestBalance(chest, realBalance);
         }
@@ -247,6 +248,7 @@ public class EBeanDAO implements DAO {
         }
 
         allChests = chests;
+
         return chests;
     }
 
@@ -263,8 +265,9 @@ public class EBeanDAO implements DAO {
 
         allChests.removeIf(chest -> {
             Location loc = chest.sign.getLocation();
-            return loc.getWorld().getName() == world && loc.getX() == x && loc.getY() == y && loc.getZ() == z;
+            return loc.getWorld().getName().equals(world) && loc.getX() == x && loc.getY() == y && loc.getZ() == z;
         });
+
         return deleteChest.execute() > 0;
     }
 
@@ -304,7 +307,6 @@ public class EBeanDAO implements DAO {
 
     @Override
     public synchronized List<AccountChest> retrieveChests(GringottsAccount account) {
-        // TODO ensure world interaction is done in sync task
         if (!allChests.isEmpty()) {
             return allChests.stream().filter(ac -> ac.account.owner.equals(account.owner)).collect(Collectors.toList());
         }
@@ -415,7 +417,8 @@ public class EBeanDAO implements DAO {
             .ieq("type", account.owner.getType())
             .ieq("owner", account.owner.getId())
             .findOneOrEmpty();
-        return result.isPresent() ? result.get().cents : 0;
+
+        return result.map(eBeanAccount -> eBeanAccount.cents).orElse(0L);
     }
 
     @Override
