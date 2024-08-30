@@ -1,4 +1,4 @@
-Gringotts
+Gringotts [![Java CI with Maven](https://github.com/nikosgram/gringotts/actions/workflows/maven.yml/badge.svg)](https://github.com/nikosgram/gringotts/actions/workflows/maven.yml) [![Maven Package](https://github.com/nikosgram/gringotts/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/nikosgram/gringotts/actions/workflows/maven-publish.yml)
 =========
 
 Gringotts is an item-based economy plugin for the Spigot Minecraft server platform. Unlike earlier economy plugins, all
