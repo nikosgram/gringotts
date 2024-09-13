@@ -131,7 +131,7 @@ public class GringottsEco implements Eco {
      */
     @Override
     public Account getAccount(String id) {
-        String[] parts = id.split("-");
+        String[] parts = id.split("-", 2);
 
         if (parts.length == 1) {
             OfflinePlayer player = Util.getOfflinePlayer(id);
