@@ -17,7 +17,7 @@ This version changed the way data are stored, so if you come from an older versi
 - Install sqlite3 command-line program, on linux you can do so by entering the following in the terminal `sudo apt install sqlite3`
 (for windows refer to [this link](https://www.sqlite.org/cli.html))
 - Open your terminal in Gringotts' directory and enter this command `sqlite3 Gringotts.db`
-- In the shell enter the following instruction
+- In the shell enter the following instructions
 ```
 CREATE TABLE db_migration (
   id                           integer not null,
@@ -37,7 +37,7 @@ Execute and then enter
 and
 `INSERT INTO db_migration VALUES(1,-1450547331,'V','1.0','initial','SUCCESS',1721777343415,'foo',1);`
 
-- If everything went smoothly you should be done, exit sqlite by tying `.exit`, replace gringotts.jar by the new version and start your server.
+- If everything went smoothly you should be done, exit sqlite by typing `.exit`, replace gringotts.jar by the new version and start your server.
 
 > You may get the error `Error: attempt to write a readonly database`, that means that your user doesn't have write permission for the file Gringotts.db.
 
