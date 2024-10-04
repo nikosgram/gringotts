@@ -60,13 +60,7 @@ public class VaultConnector implements Economy {
 
     @Override
     public boolean hasAccount(String accountId) {
-        OfflinePlayer player = Util.getOfflinePlayer(accountId);
-
-        if (player != null) {
-            return hasAccount(player);
-        }
-
-        return eco.account(accountId).exists();
+        return eco.getAccount(accountId).exists();
     }
 
     @Override
@@ -75,14 +69,8 @@ public class VaultConnector implements Economy {
     }
 
     @Override
-    public double getBalance(String accountId) {
-        OfflinePlayer player = Util.getOfflinePlayer(accountId);
-
-        if (player != null) {
-            return getBalance(player);
-        }
-
-        return eco.account(accountId).balance();
+    public double getBalance(String accountId) { // TODO optimize
+        return eco.getAccount(accountId).balance();
     }
 
     @Override
@@ -92,13 +80,7 @@ public class VaultConnector implements Economy {
 
     @Override
     public boolean has(String accountId, double amount) {
-        OfflinePlayer player = Util.getOfflinePlayer(accountId);
-
-        if (player != null) {
-            return has(player, amount);
-        }
-
-        return eco.account(accountId).has(amount);
+        return eco.getAccount(accountId).has(amount);
     }
 
     @Override
@@ -108,15 +90,7 @@ public class VaultConnector implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(String accountId, double amount) {
-        OfflinePlayer player = Util.getOfflinePlayer(accountId);
-
-        if (player != null) {
-            return withdrawPlayer(player, amount);
-        }
-
-        Account account = eco.account(accountId);
-
-        return withdrawPlayer(account, amount);
+        return withdrawPlayer(eco.getAccount(accountId), amount);
     }
 
     @Override
@@ -142,7 +116,7 @@ public class VaultConnector implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        Account account = eco.account(playerName);
+        Account account = eco.getAccount(playerName);
         return depositPlayer(account, amount);
     }
 

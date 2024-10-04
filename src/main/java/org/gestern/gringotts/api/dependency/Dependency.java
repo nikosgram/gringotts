@@ -29,7 +29,7 @@ public interface Dependency {
      */
     default String getVersion() {
         return this.getPlugin()
-                .getDescription()
+                .getPluginMeta()
                 .getVersion();
     }
 

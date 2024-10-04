@@ -1,13 +1,12 @@
 package org.gestern.gringotts.accountholder;
 
 
-import org.bukkit.OfflinePlayer;
-import org.gestern.gringotts.event.VaultCreationEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Set;
 import java.util.UUID;
+
+import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Provides AccountHolder objects for a given id.

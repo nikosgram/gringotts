@@ -101,7 +101,7 @@ public class Gringotts extends JavaPlugin {
     }
 
     public String getVersion() {
-        return getDescription().getVersion();
+        return getPluginMeta().getVersion();
     }
 
     /**

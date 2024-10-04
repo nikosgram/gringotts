@@ -9,6 +9,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
@@ -120,6 +121,22 @@ public class AccountListener implements Listener {
         }
         if (event.getDestination() != null) {
             AccountChest chest = getAccountChestFromHolder(event.getDestination().getHolder());
+            if (chest != null) {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        chest.setCachedBalance(chest.balance(true));
+                        Gringotts.instance.getDao().updateChestBalance(chest, chest.getCachedBalance());
+                    }
+                }.runTask(Gringotts.instance);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onDispenseEvent(BlockDispenseEvent event) {
+        if (event.getBlock().getState() instanceof InventoryHolder) {
+            AccountChest chest = getAccountChestFromHolder((InventoryHolder) event.getBlock().getState());
             if (chest != null) {
                 new BukkitRunnable() {
                     @Override
