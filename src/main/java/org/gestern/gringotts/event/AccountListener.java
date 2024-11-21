@@ -153,13 +153,9 @@ public class AccountListener implements Listener {
 
     @EventHandler
     public void onSignEdit(PlayerOpenSignEvent event) {
-        event.getPlayer().sendMessage("non");
         for (AccountChest chest : Gringotts.instance.getDao().retrieveChests()) {
             if (!chest.isChestLoaded()) continue; // For a sign to be changed, it needs to be loaded
-            
-            event.getPlayer().sendMessage("non1");
             if (event.getSign().equals(chest.sign)) {
-                event.getPlayer().sendMessage("non final");
                 event.setCancelled(true);
                 return;
             }
