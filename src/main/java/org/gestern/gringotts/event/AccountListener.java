@@ -22,6 +22,8 @@ import org.gestern.gringotts.Util;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 
+import io.papermc.paper.event.player.PlayerOpenSignEvent;
+
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -145,6 +147,21 @@ public class AccountListener implements Listener {
                         Gringotts.instance.getDao().updateChestBalance(chest, chest.getCachedBalance());
                     }
                 }.runTask(Gringotts.instance);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onSignEdit(PlayerOpenSignEvent event) {
+        event.getPlayer().sendMessage("non");
+        for (AccountChest chest : Gringotts.instance.getDao().retrieveChests()) {
+            if (!chest.isChestLoaded()) continue; // For a sign to be changed, it needs to be loaded
+            
+            event.getPlayer().sendMessage("non1");
+            if (event.getSign().equals(chest.sign)) {
+                event.getPlayer().sendMessage("non final");
+                event.setCancelled(true);
+                return;
             }
         }
     }
