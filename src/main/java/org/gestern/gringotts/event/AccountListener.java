@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.gestern.gringotts.AccountChest;
@@ -109,7 +110,7 @@ public class AccountListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryMoveItem(InventoryMoveItemEvent event) {
-        if (event.getSource().getHolder() != null) {
+        if (event.getSource().getType() != InventoryType.HOPPER) {
             AccountChest chest = getAccountChestFromHolder(event.getSource().getHolder());
             if (chest != null) {
                 new BukkitRunnable() {
@@ -121,7 +122,7 @@ public class AccountListener implements Listener {
                 }.runTask(Gringotts.instance);
             }
         }
-        if (event.getDestination() != null) {
+        if (event.getDestination() != null && event.getDestination().getType() != InventoryType.HOPPER) {
             AccountChest chest = getAccountChestFromHolder(event.getDestination().getHolder());
             if (chest != null) {
                 new BukkitRunnable() {
