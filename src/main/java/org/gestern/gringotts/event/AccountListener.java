@@ -94,7 +94,7 @@ public class AccountListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (!Util.isValidInventory(event.getInventory().getType())) return;
+        if (event.getInventory().getLocation() == null || !Util.isValidInventory(event.getInventory().getType())) return;
 
         AccountChest chest = getAccountChestFromHolder(event.getInventory());
         if (chest == null) return;

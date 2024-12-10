@@ -37,7 +37,6 @@ public class PendingOperationManager {
             ).findAny();
 
             if (accountChest.isEmpty()) continue;
-            System.out.println("chest found");
 
             if (operation.getAmount() < 0) {
                 accountChest.get().remove(-operation.getAmount());
