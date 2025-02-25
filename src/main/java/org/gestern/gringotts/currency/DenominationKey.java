@@ -1,11 +1,9 @@
 package org.gestern.gringotts.currency;
 
+import java.util.Objects;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.gestern.gringotts.Configuration;
-
-import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * Hashable information to identify a denomination by it's ItemStack.

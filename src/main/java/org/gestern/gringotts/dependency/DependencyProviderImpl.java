@@ -1,17 +1,16 @@
 package org.gestern.gringotts.dependency;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.gestern.gringotts.Gringotts;
-import org.gestern.gringotts.Util;
-import org.gestern.gringotts.api.dependency.Dependency;
-import org.gestern.gringotts.api.dependency.DependencyProvider;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.gestern.gringotts.Gringotts;
+import org.gestern.gringotts.Util;
+import org.gestern.gringotts.api.dependency.Dependency;
+import org.gestern.gringotts.api.dependency.DependencyProvider;
 
 /**
  * The type Dependency provider.
@@ -52,8 +51,7 @@ public class DependencyProviderImpl implements DependencyProvider {
                     "Plugin %s hooked.", name
             ));
 
-            PluginDescriptionFile desc = plugin.getDescription();
-            String version = desc.getVersion();
+            String version = plugin.getPluginMeta().getVersion();
 
             if (!Util.versionAtLeast(version, minVersion)) {
                 this.gringotts.getLogger().warning(String.format(

@@ -197,7 +197,7 @@ public final class Util {
         }
 
         return switch (material) {
-            case CHEST, TRAPPED_CHEST, DISPENSER, FURNACE, HOPPER, DROPPER, BARREL -> true;
+            case CHEST, TRAPPED_CHEST, DISPENSER, FURNACE, DROPPER, BARREL -> true;
             default -> false;
         };
     }
@@ -210,7 +210,7 @@ public final class Util {
      */
     public static boolean isValidInventory(InventoryType inventory) {
         return switch (inventory) {
-            case CHEST, DISPENSER, FURNACE, HOPPER, DROPPER, BARREL -> true;
+            case CHEST, DISPENSER, FURNACE, DROPPER, BARREL -> true;
             default -> false;
         };
     }

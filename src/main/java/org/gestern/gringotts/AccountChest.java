@@ -1,6 +1,9 @@
 package org.gestern.gringotts;
 
-import io.papermc.lib.PaperLib;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -13,8 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.gestern.gringotts.data.EBeanPendingOperation;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import io.papermc.lib.PaperLib;
 
 /**
  * Represents a storage unit for an account.
@@ -31,6 +33,7 @@ public class AccountChest {
      * Sign marking the chest as an account chest.
      */
     public final Sign             sign;
+    public List<Location> containerLocations = new ArrayList<>();
     /**
      * Account this chest belongs to.
      */
@@ -92,6 +95,23 @@ public class AccountChest {
         return block != null ? block.getLocation() : null;
     }
 
+    public boolean matchesLocation(Location loc) {
+        if (this.containerLocations.isEmpty()) {
+            InventoryHolder holder = chest();
+
+            if (holder.getInventory() instanceof DoubleChestInventory) {
+                DoubleChestInventory doubleChest = (DoubleChestInventory) holder.getInventory();
+
+                containerLocations.add(doubleChest.getLeftSide().getLocation());
+                containerLocations.add(doubleChest.getRightSide().getLocation());
+            } else {
+                containerLocations.add(holder.getInventory().getLocation());
+            }
+        }
+        loc = loc.toBlockLocation();
+        return containerLocations.contains(loc);
+    }
+
     /**
      * Get inventory of this account chest.
      *
@@ -130,7 +150,7 @@ public class AccountChest {
     }
 
     /**
-     * Return balance of this chest.
+     * Returns the balance of this chest.
      * Equivalent to AccountChest#balance(false)
      * @return balance of this chest or the cached balance if the chest is unloaded
      */
@@ -138,6 +158,11 @@ public class AccountChest {
         return balance(false);
     }
 
+    /**
+     * Returns the balance of this chest.
+     * @param forceUpdate used when cache can't be trusted and you need to check the real balance in the {@link AccountChest}
+     * @return balance of this chest or the cached balance if the chest is unloaded or if forceUpdate is true
+     */
     public long balance(boolean forceUpdate) {
         if (!forceUpdate && !isChestLoaded()) return cachedBalance;
 

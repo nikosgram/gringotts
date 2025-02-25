@@ -308,7 +308,7 @@ public class EBeanDAO implements DAO {
     @Override
     public synchronized List<AccountChest> retrieveChests(GringottsAccount account) {
         if (!allChests.isEmpty()) {
-            return allChests.stream().filter(ac -> ac.account.owner.equals(account.owner)).collect(Collectors.toList());
+            return allChests.stream().filter(ac -> ac.account.owner.getId().equals(account.owner.getId())).collect(Collectors.toList());
         }
         SqlQuery getChests = db.sqlQuery("SELECT ac.world, ac.x, ac.y, ac.z, ac.total_value " +
                 "FROM gringotts_accountchest ac JOIN gringotts_account a ON ac.account = a.id " +
