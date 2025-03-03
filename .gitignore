@@ -159,3 +159,4 @@ buildNumber.properties
 !.vscode/*.code-snippets
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij+all,visualstudiocode,java,maven
+.DS_Store

@@ -98,6 +98,7 @@
                             <target>
                                 <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\paper\1.20.1\plugins\${project.artifactId}.jar"/>
                                 <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\paper\1.21.1\plugins\${project.artifactId}.jar"/>
+                                <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\paper\1.21.4\plugins\${project.artifactId}.jar"/>
                             </target>
                         </configuration>
                         <goals>
