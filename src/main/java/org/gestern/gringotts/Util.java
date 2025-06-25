@@ -1,6 +1,5 @@
 package org.gestern.gringotts;
 
-import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -36,7 +35,7 @@ public final class Util {
             return false;
         }
 
-        BlockState blockState = PaperLib.getBlockState(block, true).getState();
+        BlockState blockState = block.getState(true);
 
         return blockState instanceof Sign;
     }
@@ -88,11 +87,7 @@ public final class Util {
             return Optional.empty();
         }
 
-        BlockState blockState = PaperLib.getBlockState(block, false).getState();
-
-        if (blockState == null) {
-            return Optional.empty();
-        }
+        BlockState blockState = block.getState(false);
 
         if (blockStateClass.isInstance(blockState)) {
             // noinspection unchecked

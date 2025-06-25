@@ -1,10 +1,5 @@
 package org.gestern.gringotts;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -16,7 +11,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.gestern.gringotts.data.EBeanPendingOperation;
 
-import io.papermc.lib.PaperLib;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Represents a storage unit for an account.
@@ -71,10 +69,7 @@ public class AccountChest {
         Block block = Util.chestBlock(sign);
 
         if (block != null) {
-            BlockState blockState = PaperLib.getBlockState(
-                    block,
-                    false
-            ).getState();
+            BlockState blockState = block.getState(false);
 
             if (blockState instanceof InventoryHolder) {
                 return (InventoryHolder) blockState;
