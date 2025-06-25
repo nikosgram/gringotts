@@ -237,6 +237,7 @@ public class AccountChest {
         Sign sign = state.get();
 
         // Fetch the sign again to avoid strange bug where lines are blank
+        // TODO: use getSide
         String[] lines = sign.getLines();
         String line0 = ChatColor.stripColor(lines[0]).trim();
 
@@ -399,12 +400,6 @@ public class AccountChest {
      */
     public GringottsAccount getAccount() {
         return account;
-    }
-
-    public void updateSign() {
-        this.sign.setLine(2, this.account.owner.getName());
-
-        this.sign.update();
     }
 
     /**

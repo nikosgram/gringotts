@@ -82,7 +82,7 @@ public class Gringotts extends JavaPlugin {
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig.setUsername("bukkit");
         dataSourceConfig.setPassword("walrus");
-        dataSourceConfig.setUrl(replaceDatabaseString("jdbc:sqlite:{DIR}{NAME}.db"));
+        dataSourceConfig.setUrl(getDatabaseString());
         dataSourceConfig.setDriver("org.sqlite.JDBC");
         dataSourceConfig.setIsolationLevel(Transaction.SERIALIZABLE);
 
@@ -205,6 +205,7 @@ public class Gringotts extends JavaPlugin {
      * @param classPath  the class path
      * @param minVersion the min version
      */
+    @SuppressWarnings("SameParameterValue")
     private void registerGenericDependency(String id,
                                            String name,
                                            String classPath,
@@ -414,7 +415,9 @@ public class Gringotts extends JavaPlugin {
         return ebean;
     }
 
-    private String replaceDatabaseString(String input) {
+    private String getDatabaseString() {
+        String input = "jdbc:sqlite:{DIR}{NAME}.db";
+
         input = input.replaceAll(
                 "\\{DIR}",
                 getDataFolder().getPath().replaceAll("\\\\", "/") + "/");
