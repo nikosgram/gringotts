@@ -96,9 +96,14 @@
                         </phase>
                         <configuration>
                             <target>
-                                <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\paper\1.20.1\plugins\${project.artifactId}.jar"/>
-                                <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\paper\1.21.1\plugins\${project.artifactId}.jar"/>
-                                <copy file="target\${project.artifactId}-${project.version}.jar" tofile="out\paper\1.21.4\plugins\${project.artifactId}.jar"/>
+                                <copy file="target\${project.artifactId}-${project.version}.jar"
+                                      tofile="out\paper\1.20.1\plugins\${project.artifactId}.jar"/>
+                                <copy file="target\${project.artifactId}-${project.version}.jar"
+                                      tofile="out\paper\1.21.1\plugins\${project.artifactId}.jar"/>
+                                <copy file="target\${project.artifactId}-${project.version}.jar"
+                                      tofile="out\paper\1.21.4\plugins\${project.artifactId}.jar"/>
+                                <copy file="target\${project.artifactId}-${project.version}.jar"
+                                      tofile="out\paper\1.21.6\plugins\${project.artifactId}.jar"/>
                             </target>
                         </configuration>
                         <goals>
@@ -125,7 +130,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <version>1.21.6-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -146,12 +151,6 @@
             <version>1.7</version>
             <scope>provided</scope>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.8-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.ebean</groupId>
@@ -181,7 +180,7 @@
     <repositories>
         <repository>
             <id>papermc</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
