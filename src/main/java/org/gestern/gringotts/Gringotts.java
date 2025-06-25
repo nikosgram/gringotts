@@ -100,10 +100,6 @@ public class Gringotts extends JavaPlugin {
         Thread.currentThread().setContextClassLoader(previousCL);
     }
 
-    public String getVersion() {
-        return getPluginMeta().getVersion();
-    }
-
     /**
      * On enable.
      */
