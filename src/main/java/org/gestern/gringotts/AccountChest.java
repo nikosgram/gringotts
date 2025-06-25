@@ -13,6 +13,7 @@ import org.gestern.gringotts.data.EBeanPendingOperation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -94,9 +95,7 @@ public class AccountChest {
         if (this.containerLocations.isEmpty()) {
             InventoryHolder holder = chest();
 
-            if (holder.getInventory() instanceof DoubleChestInventory) {
-                DoubleChestInventory doubleChest = (DoubleChestInventory) holder.getInventory();
-
+            if (holder.getInventory() instanceof DoubleChestInventory doubleChest) {
                 containerLocations.add(doubleChest.getLeftSide().getLocation());
                 containerLocations.add(doubleChest.getRightSide().getLocation());
             } else {
@@ -229,13 +228,16 @@ public class AccountChest {
      */
     @SuppressWarnings("SimplifiableIfStatement")
     public boolean notValid() {
-        // is it still a sign?
-        if (!Util.isSignBlock(sign.getBlock())) {
+        Optional<Sign> state = Util.getBlockStateAs(sign.getBlock(), Sign.class);
+
+        if (state.isEmpty()) {
             return true;
         }
 
+        Sign sign = state.get();
+
         // Fetch the sign again to avoid strange bug where lines are blank
-        String[] lines = Util.getBlockStateAs(sign.getBlock(), Sign.class).get().getLines();
+        String[] lines = sign.getLines();
         String line0 = ChatColor.stripColor(lines[0]).trim();
 
         Matcher match = VAULT_PATTERN.matcher(line0);
@@ -292,10 +294,9 @@ public class AccountChest {
             return new Chest[0];
         }
 
-        if (inventory instanceof DoubleChestInventory) {
-            DoubleChestInventory chestInventory = (DoubleChestInventory) inventory;
-            Chest                left           = (Chest) (chestInventory.getLeftSide().getHolder());
-            Chest                right          = (Chest) (chestInventory.getRightSide().getHolder());
+        if (inventory instanceof DoubleChestInventory chestInventory) {
+            Chest left = (Chest) (chestInventory.getLeftSide().getHolder());
+            Chest right = (Chest) (chestInventory.getRightSide().getHolder());
 
             return new Chest[]{left, right};
         } else {
@@ -409,7 +410,6 @@ public class AccountChest {
     /**
      * Returns true if the chunk containing this account's chest is already loaded in memory
      * (in fact this checks if vault's sign is loaded but we don't care)
-     * @return
      */
     public boolean isChestLoaded() {
         return sign.getWorld().isChunkLoaded(sign.getX()/16, sign.getZ()/16);

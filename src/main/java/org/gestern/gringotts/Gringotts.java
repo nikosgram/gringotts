@@ -1,15 +1,11 @@
 package org.gestern.gringotts;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
+import io.ebean.Database;
+import io.ebean.DatabaseFactory;
+import io.ebean.Transaction;
+import io.ebean.config.DatabaseConfig;
+import io.ebean.datasource.DataSourceConfig;
+import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.DrilldownPie;
@@ -24,7 +20,6 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.gestern.gringotts.accountholder.AccountHolderFactory;
-import org.gestern.gringotts.accountholder.AccountHolderProvider;
 import org.gestern.gringotts.api.Eco;
 import org.gestern.gringotts.api.dependency.Dependency;
 import org.gestern.gringotts.api.dependency.DependencyProvider;
@@ -46,12 +41,14 @@ import org.gestern.gringotts.event.VaultCreator;
 import org.gestern.gringotts.pendingoperation.PendingOperationListener;
 import org.gestern.gringotts.pendingoperation.PendingOperationManager;
 
-import io.ebean.Database;
-import io.ebean.DatabaseFactory;
-import io.ebean.Transaction;
-import io.ebean.config.DatabaseConfig;
-import io.ebean.datasource.DataSourceConfig;
-import net.milkbowl.vault.economy.Economy;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * The type Gringotts.
@@ -75,6 +72,8 @@ public class Gringotts extends JavaPlugin {
      */
     public Gringotts() {
         instance = this;
+
+        //noinspection ResultOfMethodCallIgnored
         getDataFolder().mkdirs();
 
         DatabaseConfig cfg = new DatabaseConfig();
@@ -284,7 +283,7 @@ public class Gringotts extends JavaPlugin {
                     String version = dependency.getVersion();
 
                     if (name != null && version != null) {
-                        returned.put(name, new HashMap<String, Integer>() {{
+                        returned.put(name, new HashMap<>() {{
                             put(version, 1);
                         }});
                     }
@@ -345,20 +344,6 @@ public class Gringotts extends JavaPlugin {
     }
 
     /**
-     * Register an accountholder provider with Gringotts.
-     * This is necessary for Gringotts to find and create
-     * account holders of any non-player type. Registering
-     * a provider for the same type twice will overwrite
-     * the previously registered provider.
-     *
-     * @param type     type id for an account type
-     * @param provider provider for the account type
-     */
-    public void registerAccountHolderProvider(String type, AccountHolderProvider provider) {
-        accountHolderFactory.registerAccountHolderProvider(type, provider);
-    }
-
-    /**
      * Get the configured player interaction messages.
      *
      * @return the configured player interaction messages
@@ -409,15 +394,6 @@ public class Gringotts extends JavaPlugin {
 
     private DAO getDAO() {
         return EBeanDAO.getDao();
-    }
-
-    /**
-     * Gets database classes.
-     *
-     * @return the database classes
-     */
-    public List<Class<?>> getDatabaseClasses() {
-        return EBeanDAO.getDatabaseClasses();
     }
 
     /**
