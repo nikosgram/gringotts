@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "github-issues-task-manager": {
+      "source": "oglofus/skills",
+      "sourceType": "github",
+      "skillPath": "skills/github-issues-task-manager/SKILL.md",
+      "computedHash": "57fd40bbbaeb51578eed1ef3410b34ece7bef9dab5d7627c970dfe926c00efe6"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+---
+description: GitHub Issues is the task manager. Use native type, Priority, Effort, sub-issues, and blocked-by/blocking. Search/create issues before work, branch from main, commit/push/update, then open a PR.
+alwaysApply: true
+---
+
+# GitHub Issues task manager
+
+Follow `AGENTS.md` and `.cursor/skills/github-issues-task-manager/SKILL.md`. The issue is the source of truth.
+
+- Do not plan or change code until a detailed GitHub issue exists.
+- Search open and recently closed issues first. Duplicate: comment, do not file another. Similar: comment the deltas; new issue only if the deliverable is distinct.
+- Classify with **native** type (`Bug` / `Feature` / `Task`), **Priority**, **Effort**, sub-issues, and **blocked by** / **blocking**. Labels only for `area:*`, `agent`, and GitHub defaults. Do not add `type:*`, `difficulty:*`, `priority:*`, or `status:*`.
+- Create the development branch through GitHub with `gh issue develop <root> --name issue-<root>-short-slug --base main --checkout` so it is natively linked to the issue; a matching branch name alone is insufficient. Read body, comments, fields, and dependencies before continuing.
+- After each finished issue or sub-issue: commit, push, comment, update the checklist, close if done.
+- Run every issue/PR test item. Check off what you ran and record the result. If a test cannot be run, put step-by-step **Manual tests** on the PR — do not skip silently.
+- When the root issue is done: open an assigned PR whose body contains the native GitHub closing reference `Closes #<root>` (or the appropriate closing keyword), then verify the issue appears in the PR's linked issues / Development context. Do not merge unless asked. Do not commit unrelated files.
+- Claude / Gemini / Copilot entry files and the Claude skill are **symlinks**. Edit `AGENTS.md` and this Cursor skill only.

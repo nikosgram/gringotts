@@ -1,0 +1,50 @@
+name: Bug
+description: Something is broken or behaves incorrectly
+title: "[Bug]: "
+type: Bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search **open and recently closed** issues before filing. If a match exists, comment on that issue instead of opening a new one.
+
+        After creating this issue, set **Priority** and **Effort** on the issue (native fields, not labels), add an `area:*` label, assign it, and use **blocked by** / **blocking** when order matters.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is wrong, who it affects, and why it matters.
+    validations:
+      required: true
+  - type: textarea
+    id: duplicate-check
+    attributes:
+      label: Duplicate check
+      description: What you searched and what you found. Link similar issues and describe any differences.
+      placeholder: Searched open and recently closed issues for … No match. / Similar to #N; difference is …
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Reproduction steps, expected vs actual, relevant files, and the change that should happen.
+    validations:
+      required: true
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing
+      description: Prefer checks an agent can run (commands, gh, git). Mark human-only checks as manual. The agent must run these or put step-by-step instructions on the PR.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Checklist of conditions that mean this issue is done.
+      value: |
+        - [ ] Bug is reproduced and fixed
+        - [ ] Tests or manual checks in Testing pass
+    validations:
+      required: true
