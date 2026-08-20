@@ -474,4 +474,19 @@ public class EBeanDAO implements DAO {
         updateChest.setParameter("total_value", balance);
         return updateChest.execute() > 0;
     }
+
+    @Override
+    public synchronized List<EBeanPendingOperation> retrievePendingOperations() {
+        return db.find(EBeanPendingOperation.class).findList();
+    }
+
+    @Override
+    public synchronized void storePendingOperation(EBeanPendingOperation operation) {
+        db.save(operation);
+    }
+
+    @Override
+    public synchronized void deletePendingOperation(EBeanPendingOperation operation) {
+        db.delete(operation);
+    }
 }

@@ -15,7 +15,7 @@ public class PendingOperationManager {
 
 
     public void init() {
-        this.pendingOperations = Gringotts.instance.getDatabase().find(EBeanPendingOperation.class).findList();
+        this.pendingOperations = Gringotts.instance.getDao().retrievePendingOperations();
         this.ready = true;
     }
 
@@ -45,13 +45,13 @@ public class PendingOperationManager {
             }
 
             pendingOperations.remove(operation);
-            Gringotts.instance.getDatabase().delete(operation);
+            Gringotts.instance.getDao().deletePendingOperation(operation);
         }
 
     }
 
     public void registerNewOperation(EBeanPendingOperation op) {
-        Gringotts.instance.getDatabase().save(op);
+        Gringotts.instance.getDao().storePendingOperation(op);
         pendingOperations.add(op);
     }
 
