@@ -182,7 +182,7 @@ public class MoneyAdminExecutor extends GringottsAbstractExecutor {
         if (player == null) {
             try {
                 player = Bukkit.getPlayer(UUID.fromString(target.id()));
-            } catch (IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException | NullPointerException ignored) {
                 return false;
             }
         }
