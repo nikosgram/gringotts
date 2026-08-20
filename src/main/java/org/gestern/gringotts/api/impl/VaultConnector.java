@@ -127,14 +127,19 @@ public class VaultConnector implements Economy {
     }
 
     private EconomyResponse depositPlayer(Account account, double amount) {
+        double balanceBefore = account.balance();
         TransactionResult added = account.add(amount);
 
         switch (added) {
             case SUCCESS:
                 return new EconomyResponse(amount, account.balance(), ResponseType.SUCCESS, null);
-            case INSUFFICIENT_SPACE:
-                return new EconomyResponse(0, account.balance(), ResponseType.FAILURE, LANG
+            case INSUFFICIENT_SPACE: {
+                double balanceAfter = account.balance();
+                double deposited = Math.max(0, balanceAfter - balanceBefore);
+
+                return new EconomyResponse(deposited, balanceAfter, ResponseType.FAILURE, LANG
                         .plugin_vault_insufficientSpace);
+            }
             case ERROR:
             default:
                 return new EconomyResponse(0, account.balance(), ResponseType.FAILURE, LANG.plugin_vault_error);
