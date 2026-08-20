@@ -6,6 +6,7 @@ import org.gestern.gringotts.GringottsStorageException;
 import org.gestern.gringotts.accountholder.AccountHolder;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * The interface Dao.
@@ -164,6 +165,27 @@ public interface DAO {
      * @return boolean indicating success or failure
      */
     boolean deleteAccountChest(String world, int x, int y, int z);
+
+    /**
+     * Return all deferred chest operations persisted by the plugin.
+     *
+     * @return persisted pending operations
+     */
+    List<EBeanPendingOperation> retrievePendingOperations();
+
+    /**
+     * Persist a deferred chest operation.
+     *
+     * @param operation operation to persist
+     */
+    void storePendingOperation(EBeanPendingOperation operation);
+
+    /**
+     * Delete a deferred chest operation.
+     *
+     * @param operation operation to delete
+     */
+    void deletePendingOperation(EBeanPendingOperation operation);
 
     /**
      * Shutdown the database connection.
