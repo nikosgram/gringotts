@@ -1,14 +1,20 @@
 package org.gestern.gringotts.commands;
 
 import com.google.common.collect.Lists;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.gestern.gringotts.Configuration;
 import org.gestern.gringotts.Language;
 import org.gestern.gringotts.api.Account;
 import org.gestern.gringotts.api.TransactionResult;
+import org.gestern.gringotts.currency.Denomination;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -88,8 +94,21 @@ public class MoneyAdminExecutor extends GringottsAbstractExecutor {
                     return false;
                 }
 
-                String            formattedAmount = eco.currency().format(amount);
-                TransactionResult added           = target.add(amount);
+                String formattedAmount = eco.currency().format(amount);
+                double beforeBalance = target.balance();
+                TransactionResult added = target.add(amount);
+
+                if (added == TransactionResult.INSUFFICIENT_SPACE) {
+                    double afterBalance = target.balance();
+                    long amountCents = Configuration.CONF.getCurrency().getCentValue(amount);
+                    long beforeCents = Configuration.CONF.getCurrency().getCentValue(beforeBalance);
+                    long afterCents = Configuration.CONF.getCurrency().getCentValue(afterBalance);
+                    long remaining = amountCents - Math.max(0L, afterCents - beforeCents);
+
+                    if (remaining > 0 && dropRemainingAtPlayer(targetAccount, target, remaining)) {
+                        added = TransactionResult.SUCCESS;
+                    }
+                }
 
                 if (added == TransactionResult.SUCCESS) {
                     String senderMessage = Language.LANG.moneyadmin_add_sender.replace(TAG_VALUE, formattedAmount).replace(TAG_PLAYER, targetAccount);
@@ -153,6 +172,44 @@ public class MoneyAdminExecutor extends GringottsAbstractExecutor {
         }
 
         return false;
+    }
+
+    private boolean dropRemainingAtPlayer(String targetAccount, Account target, long remainingCents) {
+        Player player = Bukkit.getPlayerExact(targetAccount);
+        if (player == null) {
+            player = Bukkit.getPlayer(targetAccount);
+        }
+        if (player == null) {
+            try {
+                player = Bukkit.getPlayer(UUID.fromString(target.id()));
+            } catch (IllegalArgumentException ignored) {
+                return false;
+            }
+        }
+        if (player == null) {
+            return false;
+        }
+
+        long remaining = remainingCents;
+        for (Denomination denomination : Configuration.CONF.getCurrency().getDenominations()) {
+            long value = denomination.getValue();
+            if (value <= 0 || value > remaining || denomination.getKey().type == null) {
+                continue;
+            }
+
+            ItemStack stack = new ItemStack(denomination.getKey().type);
+            int maxStackSize = stack.getMaxStackSize();
+            long itemCount = remaining / value;
+            while (itemCount > 0) {
+                int stackAmount = (int) Math.min(itemCount, (long) maxStackSize);
+                stack.setAmount(stackAmount);
+                player.getWorld().dropItem(player.getLocation(), stack.clone());
+                itemCount -= stackAmount;
+                remaining -= (long) stackAmount * value;
+            }
+        }
+
+        return remaining == 0;
     }
 
     /**

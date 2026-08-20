@@ -241,6 +241,10 @@ public class GringottsAccount {
                         playerOpt.get().getWorld().dropItem(playerOpt.get().getLocation(), stack);
                     }
                 }
+
+                if (remaining == 0) {
+                    return TransactionResult.SUCCESS;
+                }
             }
 
             return TransactionResult.INSUFFICIENT_SPACE;
