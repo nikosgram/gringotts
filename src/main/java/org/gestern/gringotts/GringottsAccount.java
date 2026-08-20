@@ -297,7 +297,9 @@ public class GringottsAccount {
                         remaining = removeFromShulkerBox(remaining, player.getInventory());
                     }
                 }
-                if (Configuration.CONF.useVaultEnderChest && remaining > 0) {
+                if (Configuration.CONF.useVaultEnderChest
+                        && Permissions.USE_VAULT_ENDERCHEST.isAllowed(player)
+                        && remaining > 0) {
                     remaining -= new AccountInventory(player.getEnderChest()).remove(remaining);
 
                     if (Configuration.CONF.includeShulkerBoxes && remaining > 0) {
